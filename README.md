@@ -17,11 +17,11 @@ HLPR helps Hunter students find classmates, share a syllabus page, and maintain 
 4. Run `supabase/schema.sql` in a new Supabase project if the database has not been provisioned.
 5. Start the app with `npm run dev`.
 
-Only `@myhunter.cuny.edu` addresses can create accounts. The restriction is checked in the interface and enforced inside the database user-creation transaction. Never place a Supabase secret or service-role key in a `NEXT_PUBLIC_` variable.
+Only `@myhunter.cuny.edu` and `@login.cuny.edu` addresses can create accounts. The restriction is checked in the interface and enforced inside the database user-creation transaction. Never place a Supabase secret or service-role key in a `NEXT_PUBLIC_` variable.
 
 ## Included features
 
-- Hunter-only email/password registration and sign-in
+- Hunter and CUNY Login email/password registration and sign-in
 - Protected server-rendered routes and refreshed auth cookies
 - Find-or-create class joining through a race-safe database function
 - Personal class dashboard and sign out
