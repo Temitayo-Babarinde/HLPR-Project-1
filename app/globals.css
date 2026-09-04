@@ -17,6 +17,7 @@ button, input, select, textarea { font: inherit; }
 button:disabled { cursor: not-allowed !important; opacity: .62; }
 button, a { -webkit-tap-highlight-color: transparent; }
 *:focus-visible { outline: 3px solid rgba(252, 184, 39, .55); outline-offset: 2px; }
+.sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
 
 .shell { min-height: 100vh; padding: 48px 20px; background: radial-gradient(circle at top right, rgba(252,184,39,.12), transparent 28%), var(--background); }
 .container { width: min(720px, 100%); margin: 0 auto; }
@@ -69,6 +70,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .section-heading h2, .new-thread h2, .conversation-header h2 { margin: 3px 0 0; color: #241d27; font-size: 20px; letter-spacing: -.035em; }
 .section-heading > button { padding: 7px 10px; border: 0; border-radius: 8px; background: var(--purple); color: white; font-size: 11px; font-weight: 800; cursor: pointer; }
 .section-heading > b { color: #817685; font-size: 11px; }
+.thread-search { height: 38px; margin: 0 3px 12px; padding: 0 10px; display: flex; align-items: center; gap: 7px; border: 1px solid #e6dfe8; border-radius: 10px; background: white; color: #9b8fa0; }
+.thread-search:focus-within { border-color: #b999c2; box-shadow: 0 0 0 3px rgba(63,1,87,.07); }
+.thread-search > span[aria-hidden] { font-size: 18px; line-height: 1; transform: translateY(-1px); }
+.thread-search input { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; color: #332b36; font-size: 12px; }
+.thread-search input::placeholder { color: #a49ba7; }
 .thread-card { width: 100%; margin-bottom: 7px; padding: 13px; border: 1px solid transparent; border-radius: 11px; background: transparent; color: inherit; text-align: left; cursor: pointer; }
 .thread-card:hover { background: white; border-color: #ece6ee; }
 .thread-card.active { background: #f3eaf5; border-color: #e2cce8; }
