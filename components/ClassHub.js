@@ -35,6 +35,7 @@ export default function ClassHub({ section }) {
   const [selectedThreadId, setSelectedThreadId] = useState(null);
   const [newThreadTitle, setNewThreadTitle] = useState('');
   const [newThreadBody, setNewThreadBody] = useState('');
+  const [threadQuery, setThreadQuery] = useState('');
   const [replyBody, setReplyBody] = useState('');
   const [replyTo, setReplyTo] = useState(null);
   const [newTask, setNewTask] = useState('');
@@ -108,6 +109,16 @@ export default function ClassHub({ section }) {
   const selectedThread = threads.find((thread) => thread.id === selectedThreadId);
   const selectedMessages = messages.filter((message) => message.thread_id === selectedThreadId);
   const roots = selectedMessages.filter((message) => !message.parent_message_id);
+  const filteredThreads = useMemo(() => {
+    const query = threadQuery.trim().toLowerCase();
+    if (!query) return threads;
+    const matchingThreadIds = new Set(
+      messages
+        .filter((message) => message.body.toLowerCase().includes(query))
+        .map((message) => message.thread_id),
+    );
+    return threads.filter((thread) => thread.title.toLowerCase().includes(query) || matchingThreadIds.has(thread.id));
+  }, [messages, threadQuery, threads]);
 
   async function createThread(event) {
     event.preventDefault();
@@ -207,7 +218,12 @@ export default function ClassHub({ section }) {
             <div className="discussion-grid">
               <aside className="thread-list">
                 <div className="section-heading"><div><span>Class forum</span><h2>Discussion</h2></div><button onClick={() => setSelectedThreadId(null)}>+ New</button></div>
-                {threads.map((thread) => {
+                <label className="thread-search">
+                  <span className="sr-only">Search discussions</span>
+                  <span aria-hidden="true">⌕</span>
+                  <input value={threadQuery} onChange={(event) => setThreadQuery(event.target.value)} placeholder="Search discussions" type="search" />
+                </label>
+                {filteredThreads.map((thread) => {
                   const count = messages.filter((message) => message.thread_id === thread.id).length;
                   return (
                     <button key={thread.id} className={selectedThreadId === thread.id ? 'thread-card active' : 'thread-card'} onClick={() => setSelectedThreadId(thread.id)}>
@@ -218,6 +234,7 @@ export default function ClassHub({ section }) {
                   );
                 })}
                 {threads.length === 0 ? <div className="empty-mini">No conversations yet. Start the first one.</div> : null}
+                {threads.length > 0 && filteredThreads.length === 0 ? <div className="empty-mini">No discussions match “{threadQuery.trim()}”.</div> : null}
               </aside>
 
               <div className="conversation-panel">
