@@ -39,6 +39,7 @@ export default function ClassHub({ section }) {
   const [replyBody, setReplyBody] = useState('');
   const [replyTo, setReplyTo] = useState(null);
   const [newTask, setNewTask] = useState('');
+  const [taskFilter, setTaskFilter] = useState('open');
   const [loading, setLoading] = useState(true);
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState('');
@@ -119,6 +120,15 @@ export default function ClassHub({ section }) {
     );
     return threads.filter((thread) => thread.title.toLowerCase().includes(query) || matchingThreadIds.has(thread.id));
   }, [messages, threadQuery, threads]);
+  const taskStats = useMemo(() => {
+    const completed = tasks.reduce((count, task) => count + Number(task.is_done), 0);
+    return { completed, open: tasks.length - completed, total: tasks.length };
+  }, [tasks]);
+  const visibleTasks = useMemo(() => {
+    if (taskFilter === 'open') return tasks.filter((task) => !task.is_done);
+    if (taskFilter === 'done') return tasks.filter((task) => task.is_done);
+    return tasks;
+  }, [taskFilter, tasks]);
 
   async function createThread(event) {
     event.preventDefault();
@@ -289,11 +299,21 @@ export default function ClassHub({ section }) {
 
           {tab === 'tasks' ? (
             <div className="feature-card">
-              <div className="section-heading"><div><span>Shared workspace</span><h2>Class tasks</h2></div><b>{tasks.filter((task) => !task.is_done).length} open</b></div>
+              <div className="section-heading"><div><span>Shared workspace</span><h2>Class tasks</h2></div><b>{taskStats.open} open</b></div>
+              <div className="task-overview">
+                <div className="task-progress-copy"><strong>{taskStats.total ? `${taskStats.completed} of ${taskStats.total} complete` : 'Ready when you are'}</strong><span>{taskStats.total ? `${Math.round((taskStats.completed / taskStats.total) * 100)}%` : '0%'}</span></div>
+                <div className="task-progress" role="progressbar" aria-label="Completed class tasks" aria-valuemin="0" aria-valuemax="100" aria-valuenow={taskStats.total ? Math.round((taskStats.completed / taskStats.total) * 100) : 0}>
+                  <span style={{ width: `${taskStats.total ? (taskStats.completed / taskStats.total) * 100 : 0}%` }} />
+                </div>
+              </div>
               <div className="task-entry"><input value={newTask} onChange={(event) => setNewTask(event.target.value)} onKeyDown={(event) => event.key === 'Enter' && addTask()} placeholder="Add an assignment or reminder…" /><button onClick={addTask}>Add</button></div>
+              <div className="task-filters" aria-label="Filter class tasks">
+                {[['open', `Open ${taskStats.open}`], ['done', `Done ${taskStats.completed}`], ['all', `All ${taskStats.total}`]].map(([key, label]) => <button key={key} className={taskFilter === key ? 'active' : ''} aria-pressed={taskFilter === key} onClick={() => setTaskFilter(key)}>{label}</button>)}
+              </div>
               <div className="task-list">
-                {tasks.map((task) => <button key={task.id} className={task.is_done ? 'task done' : 'task'} onClick={() => toggleTask(task)}><span>{task.is_done ? '✓' : ''}</span><p>{task.title}</p></button>)}
+                {visibleTasks.map((task) => <button key={task.id} className={task.is_done ? 'task done' : 'task'} onClick={() => toggleTask(task)}><span>{task.is_done ? '✓' : ''}</span><p>{task.title}</p></button>)}
                 {tasks.length === 0 ? <div className="empty-state"><div>✓</div><h3>Nothing due yet</h3><p>Add the first task for your class.</p></div> : null}
+                {tasks.length > 0 && visibleTasks.length === 0 ? <div className="empty-state compact"><div>✓</div><h3>{taskFilter === 'open' ? 'Everything is complete' : 'No completed tasks yet'}</h3><p>{taskFilter === 'open' ? 'Nice work. Completed tasks are saved under Done.' : 'Finish a task and it will appear here.'}</p></div> : null}
               </div>
             </div>
           ) : null}
