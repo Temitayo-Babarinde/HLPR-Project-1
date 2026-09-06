@@ -18,63 +18,44 @@ export default async function DashboardPage() {
   const classes = (enrollments || []).map((e) => e.sections).filter(Boolean);
 
   return (
-    <main className="shell">
-      <div className="container">
-        <div className="mobile-stack" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 14, marginBottom: 24 }}>
+    <main className="dashboard-shell">
+      <div className="dashboard-container">
+        <header className="dashboard-header">
           <div>
-            <div className="eyebrow">hlpr</div>
-            <h1 style={{ fontSize: 28, fontWeight: 800, color: '#111827', margin: '5px 0 0' }}>Your classes</h1>
-            <p style={{ color: '#6b7280', fontSize: 13, marginTop: 2 }}>{user.email}</p>
+            <div className="dashboard-brand">hlpr<span>.</span></div>
+            <p className="dashboard-kicker">Student workspace</p>
+            <h1>Your classes</h1>
+            <p className="dashboard-email">Signed in as {user.email}</p>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}><SignOutButton /><Link href="/join" style={buttonLinkStyle}>+ Join a class</Link></div>
-        </div>
+          <div className="dashboard-actions"><SignOutButton /><Link href="/join" className="dashboard-join">+ Join a class</Link></div>
+        </header>
 
         {error && <p className="error">We could not load your classes. Refresh and try again.</p>}
 
         {classes.length === 0 ? (
-          <div className="card" style={{ padding: 48, textAlign: 'center' }}>
-            <p style={{ color: '#6b7280', marginBottom: 10 }}>You have not joined a class yet.</p>
-            <Link href="/join" style={{ color: '#3F0157', fontWeight: 600, fontSize: 14 }}>
-              Find your class →
-            </Link>
-          </div>
+          <section className="dashboard-empty">
+            <div aria-hidden="true">+</div>
+            <p className="eyebrow">Build your semester</p>
+            <h2>Your class space starts here</h2>
+            <p>Join a course to share tasks, compare syllabus notes, and talk with classmates.</p>
+            <Link href="/join" className="dashboard-join">Find your first class</Link>
+          </section>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <section aria-labelledby="course-list-heading">
+            <div className="dashboard-section-title"><div><p className="eyebrow">Current semester</p><h2 id="course-list-heading">Course spaces</h2></div><span>{classes.length} {classes.length === 1 ? 'class' : 'classes'}</span></div>
+            <div className="course-grid">
             {classes.map((c) => (
-              <Link
-                key={c.id}
-                href={`/class/${c.id}`}
-                style={{
-                  display: 'block',
-                  background: 'white',
-                  border: '1px solid #e5e7eb',
-                  borderLeft: '4px solid #FCB827',
-                  borderRadius: 10,
-                  padding: '14px 16px',
-                  textDecoration: 'none',
-                }}
-              >
-                <p style={{ fontWeight: 700, letterSpacing: '0.03em', textTransform: 'uppercase', color: '#3F0157', fontSize: 14 }}>
-                  {c.courses.department} {c.courses.number}
-                </p>
-                <p style={{ color: '#6b7280', fontSize: 13, marginTop: 2 }}>
-                  {c.courses.title} · Section {c.section_number} · {c.semester}
-                </p>
+              <Link key={c.id} href={`/class/${c.id}`} className="course-card">
+                <div className="course-card-top"><span>{c.courses.department} {c.courses.number}</span><em>{c.semester}</em></div>
+                <h3>{c.courses.title}</h3>
+                <div className="course-card-meta"><span>Section {c.section_number}</span>{c.professor_name ? <span>{c.professor_name}</span> : null}</div>
+                <div className="course-card-open">Open class <span aria-hidden="true">→</span></div>
               </Link>
             ))}
-          </div>
+            </div>
+          </section>
         )}
       </div>
     </main>
   );
 }
-
-const buttonLinkStyle = {
-  background: '#3F0157',
-  color: 'white',
-  borderRadius: 8,
-  padding: '10px 16px',
-  fontSize: 14,
-  fontWeight: 600,
-  textDecoration: 'none',
-};
