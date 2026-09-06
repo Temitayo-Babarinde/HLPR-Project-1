@@ -33,9 +33,52 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .error { padding: 10px 12px; border-radius: 10px; background: #fff0f0; color: #a31d1d; font-size: 13px; }
 .success { padding: 10px 12px; border-radius: 10px; background: #eefbf2; color: #176b35; font-size: 13px; }
 
+.dashboard-shell { min-height: 100vh; padding: 46px 20px 72px; background: radial-gradient(circle at 88% 4%, rgba(252,184,39,.16), transparent 26%), linear-gradient(180deg, #faf7fb, #f4f0f6); }
+.dashboard-container { width: min(1040px, 100%); margin: 0 auto; }
+.dashboard-header { margin-bottom: 38px; padding: 24px 26px; display: flex; align-items: center; justify-content: space-between; gap: 24px; overflow: hidden; position: relative; border-radius: 20px; background: linear-gradient(135deg, #280036, #500266 76%, #68205c); color: white; box-shadow: 0 20px 50px rgba(49,0,67,.16); }
+.dashboard-header::after { content: ''; width: 180px; height: 180px; position: absolute; right: -55px; top: -92px; border: 36px solid rgba(252,184,39,.12); border-radius: 50%; pointer-events: none; }
+.dashboard-header > * { position: relative; z-index: 1; }
+.dashboard-brand { font-size: 26px; font-weight: 950; letter-spacing: -.06em; }
+.dashboard-brand span { color: var(--gold); }
+.dashboard-kicker { margin: 14px 0 0; color: #ffd675; font-size: 10px; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+.dashboard-header h1 { margin: 4px 0 0; font-size: clamp(27px, 4vw, 38px); line-height: 1; letter-spacing: -.045em; }
+.dashboard-email { margin: 8px 0 0; color: rgba(255,255,255,.62); font-size: 11px; }
+.dashboard-actions { display: flex; align-items: center; gap: 9px; }
+.dashboard-join { min-height: 42px; padding: 10px 15px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; background: var(--gold); color: var(--purple-dark); font-size: 12px; font-weight: 850; text-decoration: none; }
+.dashboard-join:hover { background: #ffd05d; }
+.dashboard-section-title { margin-bottom: 15px; display: flex; align-items: end; justify-content: space-between; gap: 18px; }
+.dashboard-section-title p { margin: 0; }
+.dashboard-section-title h2 { margin: 4px 0 0; font-size: 24px; letter-spacing: -.04em; }
+.dashboard-section-title > span { padding: 5px 9px; border-radius: 999px; background: #eae1ed; color: #694674; font-size: 10px; font-weight: 800; }
+.course-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.course-card { min-width: 0; min-height: 190px; padding: 19px; display: flex; flex-direction: column; position: relative; overflow: hidden; border: 1px solid #e7dfe9; border-radius: 16px; background: white; color: inherit; text-decoration: none; box-shadow: 0 10px 30px rgba(49,0,67,.05); transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.course-card::before { content: ''; width: 4px; position: absolute; inset: 0 auto 0 0; background: linear-gradient(var(--gold), #f5d36c); }
+.course-card:hover { transform: translateY(-2px); border-color: #d9c6df; box-shadow: 0 16px 34px rgba(49,0,67,.1); }
+.course-card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.course-card-top > span { color: var(--purple); font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.course-card-top em { padding: 4px 7px; border-radius: 999px; background: #f5eff7; color: #795384; font-size: 9px; font-style: normal; font-weight: 800; }
+.course-card h3 { margin: 20px 0 8px; color: #2d2530; font-size: 19px; line-height: 1.25; letter-spacing: -.025em; }
+.course-card-meta { display: flex; flex-wrap: wrap; gap: 5px 13px; color: #8b818e; font-size: 10px; }
+.course-card-meta span + span::before { content: '•'; margin-right: 10px; color: #c4b8c7; }
+.course-card-open { margin-top: auto; padding-top: 20px; display: flex; align-items: center; justify-content: space-between; color: #785083; font-size: 10px; font-weight: 850; }
+.course-card-open span { font-size: 18px; transition: transform .18s ease; }
+.course-card:hover .course-card-open span { transform: translateX(3px); }
+.dashboard-empty { padding: 70px 26px; border: 1px solid #e5dce8; border-radius: 20px; background: rgba(255,255,255,.84); text-align: center; box-shadow: 0 14px 38px rgba(49,0,67,.05); }
+.dashboard-empty > div { width: 48px; height: 48px; margin: 0 auto 18px; display: grid; place-items: center; border-radius: 15px; background: #f0e5f3; color: var(--purple); font-size: 27px; }
+.dashboard-empty .eyebrow { margin: 0; }
+.dashboard-empty h2 { margin: 7px 0; font-size: 24px; letter-spacing: -.04em; }
+.dashboard-empty > p:not(.eyebrow) { max-width: 430px; margin: 0 auto 20px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+
 @media (max-width: 560px) {
   .shell { padding: 28px 14px; }
   .mobile-stack { flex-direction: column; align-items: stretch !important; }
+  .dashboard-shell { padding: 16px 12px 48px; }
+  .dashboard-header { margin-bottom: 27px; padding: 20px; align-items: stretch; flex-direction: column; }
+  .dashboard-actions { width: 100%; }
+  .dashboard-actions > * { flex: 1; }
+  .course-grid { grid-template-columns: 1fr; }
+  .course-card { min-height: 175px; }
+  .dashboard-empty { padding: 55px 20px; }
 }
 
 .class-app { min-height: 100vh; background: #f5f2f6; }
