@@ -44,6 +44,7 @@ export default function ClassHub({ section }) {
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState('');
   const [saveState, setSaveState] = useState('saved');
+  const [copyState, setCopyState] = useState('idle');
   const [userId, setUserId] = useState(null);
   const loadedSyllabus = useRef(false);
 
@@ -129,6 +130,16 @@ export default function ClassHub({ section }) {
     if (taskFilter === 'done') return tasks.filter((task) => task.is_done);
     return tasks;
   }, [taskFilter, tasks]);
+  const syllabusWords = syllabus.trim() ? syllabus.trim().split(/\s+/).length : 0;
+
+  async function copySyllabus() {
+    try {
+      await navigator.clipboard.writeText(syllabus);
+      setCopyState('copied');
+    } catch {
+      setCopyState('error');
+    }
+  }
 
   async function createThread(event) {
     event.preventDefault();
@@ -321,7 +332,11 @@ export default function ClassHub({ section }) {
           {tab === 'syllabus' ? (
             <div className="feature-card">
               <div className="section-heading"><div><span>Living document</span><h2>Shared syllabus</h2></div><b className={saveState === 'error' ? 'save-error' : ''}>{saveState === 'saving' ? 'Saving…' : saveState === 'error' ? 'Save failed' : 'Saved'}</b></div>
-              <textarea className="syllabus-editor" value={syllabus} onChange={(event) => setSyllabus(event.target.value)} rows={18} placeholder="Add grading details, weekly topics, office hours, and important dates…" />
+              <div className="syllabus-toolbar">
+                <div><strong>{syllabusWords} {syllabusWords === 1 ? 'word' : 'words'}</strong><span>{syllabus.length.toLocaleString()} characters · Autosaves as you type</span></div>
+                <button type="button" onClick={copySyllabus} disabled={!syllabus} aria-live="polite">{copyState === 'copied' ? '✓ Copied' : copyState === 'error' ? 'Copy failed' : 'Copy syllabus'}</button>
+              </div>
+              <textarea className="syllabus-editor" value={syllabus} onChange={(event) => { setSyllabus(event.target.value); setCopyState('idle'); }} rows={18} placeholder="Add grading details, weekly topics, office hours, and important dates…" aria-label="Shared syllabus content" />
             </div>
           ) : null}
 
