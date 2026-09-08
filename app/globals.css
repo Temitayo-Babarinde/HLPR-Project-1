@@ -68,6 +68,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .dashboard-empty .eyebrow { margin: 0; }
 .dashboard-empty h2 { margin: 7px 0; font-size: 24px; letter-spacing: -.04em; }
 .dashboard-empty > p:not(.eyebrow) { max-width: 430px; margin: 0 auto 20px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.password-field { position: relative; margin-bottom: 10px; }
+.password-field input { padding-right: 68px !important; }
+.password-field:focus-within input { border-color: #b999c2 !important; box-shadow: 0 0 0 3px rgba(63,1,87,.07); }
+.password-toggle { position: absolute; top: 50%; right: 6px; min-width: 52px; min-height: 32px; padding: 0 9px; border: 0; border-radius: 8px; background: #f4edf6; color: var(--purple); font-size: 11px; font-weight: 850; cursor: pointer; transform: translateY(-50%); }
+.password-toggle:hover { background: #eaddec; }
+.password-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 @media (max-width: 560px) {
   .shell { padding: 28px 14px; }
