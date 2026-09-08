@@ -8,6 +8,7 @@ export default function LoginPage() {
   const [mode, setMode] = useState('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -88,25 +89,38 @@ export default function LoginPage() {
         </p>
 
         {mode === 'signup' && (
-          <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full name" required style={inputStyle} />
+          <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full name" autoComplete="name" required style={inputStyle} />
         )}
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="name@myhunter.cuny.edu or @login.cuny.edu"
+          autoComplete="email"
           required
           style={inputStyle}
         />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-          minLength={6}
-          style={inputStyle}
-        />
+        <div className="password-field">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+            required
+            minLength={6}
+            style={{ ...inputStyle, marginBottom: 0 }}
+          />
+          <button
+            type="button"
+            className="password-toggle"
+            onClick={() => setShowPassword((visible) => !visible)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-pressed={showPassword}
+          >
+            {showPassword ? 'Hide' : 'Show'}
+          </button>
+        </div>
 
         {error && <p className="error">{error}</p>}
         {message && <p className="success">{message}</p>}
