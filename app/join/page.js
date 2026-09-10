@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '../../lib/supabase/client';
 
 const DEPARTMENTS = ['AFPRL', 'ANTHC', 'BIOL', 'CHEM', 'CSCI', 'ECON', 'ENGL', 'HIST', 'MATH', 'MEDIA', 'PHIL', 'PHYS', 'POLSC', 'PSYCH', 'SOC'];
@@ -17,6 +18,8 @@ export default function JoinPage() {
   const [professor, setProfessor] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const courseNumber = number.trim() || '—';
+  const courseTitle = title.trim() || 'Course title will be added automatically';
 
   async function handleJoin(e) {
     e.preventDefault();
@@ -41,34 +44,58 @@ export default function JoinPage() {
   }
 
   return (
-    <main className="shell">
-      <div style={{ maxWidth: 420, margin: '0 auto' }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 4 }}>Join a class</h1>
-        <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 20 }}>
+    <main className="shell join-shell">
+      <div className="join-page">
+        <Link href="/dashboard" className="join-back">← Back to classes</Link>
+        <div className="join-heading">
+          <span className="eyebrow">Your next study space</span>
+          <h1>Join a class</h1>
+        </div>
+        <p className="join-intro">
           If your section is missing, fill it in. The next classmate who searches for it lands in the same place.
         </p>
 
-        <form onSubmit={handleJoin} className="card" style={{ padding: 22 }}>
-          <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
-            <select value={department} onChange={(e) => setDepartment(e.target.value)} style={{ ...inputStyle, flex: 1 }}>
-              {DEPARTMENTS.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-            <input value={number} onChange={(e) => setNumber(e.target.value)} placeholder="Course #" required style={{ ...inputStyle, flex: 1 }} />
+        <form onSubmit={handleJoin} className="card join-card">
+          <div className="join-preview" aria-live="polite">
+            <span>{department} {courseNumber}</span>
+            <strong>{courseTitle}</strong>
+            <small>{section.trim() || 'Section —'} · {semester.trim() || 'Semester —'}</small>
           </div>
-          <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
-            <input value={section} onChange={(e) => setSection(e.target.value)} placeholder="Section" required style={{ ...inputStyle, flex: 1 }} />
-            <input value={semester} onChange={(e) => setSemester(e.target.value)} placeholder="Semester" required style={{ ...inputStyle, flex: 1 }} />
+
+          <div className="join-grid">
+            <label>
+              <span>Department</span>
+              <select value={department} onChange={(e) => setDepartment(e.target.value)}>
+                {DEPARTMENTS.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>Course number</span>
+              <input value={number} onChange={(e) => setNumber(e.target.value)} placeholder="12700" inputMode="numeric" autoComplete="off" required />
+            </label>
+            <label>
+              <span>Section</span>
+              <input value={section} onChange={(e) => setSection(e.target.value)} placeholder="01" autoComplete="off" required />
+            </label>
+            <label>
+              <span>Semester</span>
+              <input value={semester} onChange={(e) => setSemester(e.target.value)} placeholder="Fall 2026" autoComplete="off" required />
+            </label>
           </div>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Course title (if new)" style={inputStyle} />
-          <input value={professor} onChange={(e) => setProfessor(e.target.value)} placeholder="Professor (optional)" style={inputStyle} />
+          <label className="join-field">
+            <span>Course title <small>optional</small></span>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Software Analysis & Design" autoComplete="off" />
+          </label>
+          <label className="join-field">
+            <span>Professor <small>optional</small></span>
+            <input value={professor} onChange={(e) => setProfessor(e.target.value)} placeholder="Professor's name" autoComplete="off" />
+          </label>
 
-          {error && <p className="error">{error}</p>}
+          {error && <p className="error" role="alert">{error}</p>}
 
-          <button type="submit" disabled={loading} style={buttonStyle}>
+          <button type="submit" disabled={loading} className="join-submit">
             {loading ? 'Joining…' : 'Find & join class'}
           </button>
         </form>
@@ -76,26 +103,3 @@ export default function JoinPage() {
     </main>
   );
 }
-
-const inputStyle = {
-  width: '100%',
-  border: '1px solid #d1d5db',
-  borderRadius: 8,
-  padding: '10px 12px',
-  fontSize: 14,
-  marginBottom: 10,
-  outline: 'none',
-  boxSizing: 'border-box',
-};
-
-const buttonStyle = {
-  width: '100%',
-  background: '#3F0157',
-  color: 'white',
-  border: 'none',
-  borderRadius: 8,
-  padding: '10px 12px',
-  fontSize: 14,
-  fontWeight: 600,
-  cursor: 'pointer',
-};
