@@ -74,6 +74,27 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .password-toggle { position: absolute; top: 50%; right: 6px; min-width: 52px; min-height: 32px; padding: 0 9px; border: 0; border-radius: 8px; background: #f4edf6; color: var(--purple); font-size: 11px; font-weight: 850; cursor: pointer; transform: translateY(-50%); }
 .password-toggle:hover { background: #eaddec; }
 .password-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.join-shell { background: radial-gradient(circle at top right, rgba(252,184,39,.16), transparent 30%), linear-gradient(180deg, #f9f6fa, #f4f0f5); }
+.join-page { width: min(100%, 520px); margin: 0 auto; }
+.join-back { display: inline-flex; margin-bottom: 26px; color: #74507e; font-size: 12px; font-weight: 800; text-decoration: none; }
+.join-back:hover { color: var(--purple); }
+.join-heading { display: block; }
+.join-heading h1 { margin: 5px 0 0; color: #2d2530; font-size: 30px; letter-spacing: -.045em; }
+.join-intro { max-width: 470px; margin: 8px 0 22px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.join-card { padding: 22px; box-shadow: 0 20px 55px rgba(49,0,67,.09); }
+.join-preview { margin-bottom: 20px; padding: 17px 18px; border: 1px solid rgba(252,184,39,.35); border-radius: 13px; display: grid; background: linear-gradient(135deg, #350148, #58056b); color: white; }
+.join-preview span { color: #ffd876; font-size: 10px; font-weight: 900; letter-spacing: .12em; }
+.join-preview strong { margin-top: 7px; font-size: 16px; }
+.join-preview small { margin-top: 5px; color: rgba(255,255,255,.65); font-size: 10px; }
+.join-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.join-grid label, .join-field { display: grid; gap: 6px; margin-bottom: 12px; }
+.join-grid label > span, .join-field > span { color: #574c5b; font-size: 10px; font-weight: 850; letter-spacing: .025em; }
+.join-field span small { color: #a399a6; font-size: 9px; font-weight: 650; }
+.join-grid input, .join-grid select, .join-field input { width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid #ddd4e0; border-radius: 10px; outline: 0; background: #fdfcfd; color: #332b36; font-size: 13px; box-sizing: border-box; }
+.join-grid input:focus, .join-grid select:focus, .join-field input:focus { border-color: #b999c2; box-shadow: 0 0 0 3px rgba(63,1,87,.07); }
+.join-submit { width: 100%; min-height: 44px; margin-top: 4px; border: 0; border-radius: 10px; background: var(--purple); color: white; font-size: 13px; font-weight: 850; cursor: pointer; }
+.join-submit:hover:not(:disabled) { background: #53036b; }
+.join-submit:disabled { cursor: wait; opacity: .68; }
 
 @media (max-width: 560px) {
   .shell { padding: 28px 14px; }
@@ -85,6 +106,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .course-grid { grid-template-columns: 1fr; }
   .course-card { min-height: 175px; }
   .dashboard-empty { padding: 55px 20px; }
+  .join-back { margin-bottom: 20px; }
+  .join-card { padding: 18px; }
+  .join-grid { grid-template-columns: 1fr; gap: 0; }
 }
 
 .class-app { min-height: 100vh; background: #f5f2f6; }
