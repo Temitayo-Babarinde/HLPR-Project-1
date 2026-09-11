@@ -18,6 +18,9 @@ button:disabled { cursor: not-allowed !important; opacity: .62; }
 button, a { -webkit-tap-highlight-color: transparent; }
 *:focus-visible { outline: 3px solid rgba(252, 184, 39, .55); outline-offset: 2px; }
 .sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
+.skip-link { position: fixed; top: 12px; left: 50%; z-index: 1000; padding: 10px 15px; border: 2px solid var(--gold); border-radius: 10px; background: var(--purple-dark); color: white; font-size: 12px; font-weight: 850; text-decoration: none; box-shadow: 0 10px 30px rgba(41,0,57,.24); transform: translate(-50%, calc(-100% - 20px)); transition: transform .16s ease; }
+.skip-link:focus { outline: 3px solid rgba(252,184,39,.5); outline-offset: 2px; transform: translate(-50%, 0); }
+#main-content:focus { outline: none; }
 
 .shell { min-height: 100vh; padding: 48px 20px; background: radial-gradient(circle at top right, rgba(252,184,39,.12), transparent 28%), var(--background); }
 .container { width: min(720px, 100%); margin: 0 auto; }
