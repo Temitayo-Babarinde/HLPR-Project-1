@@ -226,6 +226,13 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .syllabus-editor { width: 100%; min-height: 420px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; outline: 0; resize: vertical; background: #fdfcfd; color: #403744; font: 13px/1.7 Arial, sans-serif; }
 .syllabus-editor:focus { border-color: #b999c2; box-shadow: 0 0 0 3px rgba(63,1,87,.07); }
 .save-error { color: #b42318 !important; }
+.roster-toolbar { margin: -3px 0 14px; display: flex; align-items: center; gap: 12px; }
+.roster-search { min-width: 0; height: 42px; flex: 1; padding: 0 12px; display: flex; align-items: center; gap: 8px; border: 1px solid #e2dbe5; border-radius: 11px; background: #fbfafb; color: #9b8fa0; }
+.roster-search:focus-within { border-color: #b999c2; background: white; box-shadow: 0 0 0 3px rgba(63,1,87,.07); }
+.roster-search > span { font-size: 18px; line-height: 1; }
+.roster-search input { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; color: #332b36; font-size: 12px; }
+.roster-search input::placeholder { color: #a49ba7; }
+.roster-toolbar > span { flex: 0 0 auto; color: #785083; font-size: 10px; font-weight: 850; }
 .roster-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .person-card { min-width: 0; display: flex; align-items: center; gap: 12px; padding: 13px; border: 1px solid #eee9ef; border-radius: 12px; background: #fcfbfc; }
 .person-card > div:last-child { min-width: 0; }
