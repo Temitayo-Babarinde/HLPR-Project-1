@@ -36,6 +36,7 @@ export default function ClassHub({ section }) {
   const [newThreadTitle, setNewThreadTitle] = useState('');
   const [newThreadBody, setNewThreadBody] = useState('');
   const [threadQuery, setThreadQuery] = useState('');
+  const [rosterQuery, setRosterQuery] = useState('');
   const [replyBody, setReplyBody] = useState('');
   const [replyTo, setReplyTo] = useState(null);
   const [newTask, setNewTask] = useState('');
@@ -130,6 +131,13 @@ export default function ClassHub({ section }) {
     if (taskFilter === 'done') return tasks.filter((task) => task.is_done);
     return tasks;
   }, [taskFilter, tasks]);
+  const filteredRoster = useMemo(() => {
+    const query = rosterQuery.trim().toLowerCase();
+    if (!query) return roster;
+    return roster.filter((person) =>
+      [person.full_name, person.email].some((value) => value?.toLowerCase().includes(query)),
+    );
+  }, [roster, rosterQuery]);
   const syllabusWords = syllabus.trim() ? syllabus.trim().split(/\s+/).length : 0;
 
   async function copySyllabus() {
@@ -343,9 +351,17 @@ export default function ClassHub({ section }) {
           {tab === 'roster' ? (
             <div className="feature-card">
               <div className="section-heading"><div><span>Your community</span><h2>People</h2></div><b>{roster.length} total</b></div>
-              <div className="roster-grid">
-                {roster.map((person) => <div className="person-card" key={person.id}><div className="avatar large">{initials(person)}</div><div><strong>{person.full_name || 'Classmate'}</strong><span>{person.email}{person.isMe ? ' · You' : ''}</span></div></div>)}
+              <div className="roster-toolbar">
+                <label className="roster-search">
+                  <span aria-hidden="true">⌕</span>
+                  <input type="search" value={rosterQuery} onChange={(event) => setRosterQuery(event.target.value)} placeholder="Search by name or email" aria-label="Search classmates by name or email" />
+                </label>
+                {rosterQuery.trim() ? <span aria-live="polite">{filteredRoster.length} found</span> : null}
               </div>
+              <div className="roster-grid">
+                {filteredRoster.map((person) => <div className="person-card" key={person.id}><div className="avatar large">{initials(person)}</div><div><strong>{person.full_name || 'Classmate'}</strong><span>{person.email}{person.isMe ? ' · You' : ''}</span></div></div>)}
+              </div>
+              {roster.length > 0 && filteredRoster.length === 0 ? <div className="empty-state compact"><div aria-hidden="true">⌕</div><h3>No classmates found</h3><p>Try a different name or email.</p></div> : null}
             </div>
           ) : null}
         </section>
