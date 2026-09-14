@@ -271,8 +271,14 @@ export default function ClassHub({ section }) {
                   <form className="new-thread" onSubmit={createThread}>
                     <span className="eyebrow">Start a conversation</span>
                     <h2>What should the class discuss?</h2>
-                    <input className="input" value={newThreadTitle} onChange={(event) => setNewThreadTitle(event.target.value)} placeholder="Topic title" maxLength={160} required />
-                    <textarea className="input" value={newThreadBody} onChange={(event) => setNewThreadBody(event.target.value)} placeholder="Ask a question, share a resource, or start a study thread…" rows={6} maxLength={4000} required />
+                    <div className="composer-field">
+                      <input className="input" value={newThreadTitle} onChange={(event) => setNewThreadTitle(event.target.value)} placeholder="Topic title" maxLength={160} aria-describedby="topic-title-count" required />
+                      <span id="topic-title-count" className="composer-count">{newThreadTitle.length} / 160</span>
+                    </div>
+                    <div className="composer-field">
+                      <textarea className="input" value={newThreadBody} onChange={(event) => setNewThreadBody(event.target.value)} placeholder="Ask a question, share a resource, or start a study thread…" rows={6} maxLength={4000} aria-describedby="topic-body-count" required />
+                      <span id="topic-body-count" className="composer-count">{newThreadBody.length.toLocaleString()} / 4,000</span>
+                    </div>
                     <button className="button" disabled={posting}>{posting ? 'Posting…' : 'Post topic'}</button>
                   </form>
                 ) : (
@@ -307,8 +313,11 @@ export default function ClassHub({ section }) {
                     </div>
                     <form className="reply-box" onSubmit={postReply}>
                       {replyTo ? <div className="replying">Replying to a message <button type="button" onClick={() => setReplyTo(null)}>Cancel</button></div> : null}
-                      <textarea value={replyBody} onChange={(event) => setReplyBody(event.target.value)} placeholder="Write a reply…" rows={3} maxLength={4000} required />
-                      <button className="button" disabled={posting}>{posting ? 'Sending…' : 'Send reply'}</button>
+                      <textarea value={replyBody} onChange={(event) => setReplyBody(event.target.value)} placeholder="Write a reply…" rows={3} maxLength={4000} aria-describedby="reply-count" required />
+                      <div className="reply-actions">
+                        <span id="reply-count" className="composer-count">{replyBody.length.toLocaleString()} / 4,000</span>
+                        <button className="button" disabled={posting}>{posting ? 'Sending…' : 'Send reply'}</button>
+                      </div>
                     </form>
                   </>
                 )}
