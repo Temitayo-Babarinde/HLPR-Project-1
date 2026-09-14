@@ -174,6 +174,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .new-thread { max-width: 610px; width: 100%; margin: auto; padding: 36px; display: flex; flex-direction: column; gap: 12px; }
 .new-thread h2 { margin: 0 0 12px; font-size: 27px; }
 .new-thread textarea { resize: vertical; line-height: 1.6; }
+.composer-field { display: grid; gap: 5px; }
+.composer-count { color: #968b99; font-size: 9px; font-weight: 750; letter-spacing: .02em; }
+.composer-field .composer-count { justify-self: end; margin-right: 3px; }
 .new-thread .button { align-self: flex-end; }
 .message-stream { flex: 1; padding: 12px 24px 24px; overflow-y: auto; max-height: 490px; }
 .message-group { padding: 17px 0; border-bottom: 1px solid #f0ecf1; }
@@ -190,7 +193,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .message-copy button { padding: 0; border: 0; background: none; color: #7b4b88; font-size: 10px; font-weight: 800; cursor: pointer; }
 .reply-box { margin: 0 20px 20px; padding: 10px; border: 1px solid #dfd6e2; border-radius: 13px; background: #fbfafb; }
 .reply-box textarea { width: 100%; padding: 5px 6px; border: 0; outline: 0; resize: none; background: transparent; color: #342c37; font-size: 13px; line-height: 1.5; }
-.reply-box .button { min-height: 34px; margin-left: auto; padding: 7px 13px; display: flex; font-size: 11px; }
+.reply-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.reply-box .button { min-height: 34px; padding: 7px 13px; display: flex; font-size: 11px; }
 .replying { margin-bottom: 6px; padding: 6px 8px; border-radius: 7px; background: #f0e7f2; color: #70427c; font-size: 10px; }
 .replying button { float: right; border: 0; background: transparent; color: inherit; font-weight: 800; cursor: pointer; }
 .feature-card { min-height: 500px; padding: 25px; border: 1px solid var(--line); border-radius: 18px; background: white; box-shadow: 0 18px 45px rgba(49,0,67,.07); }
