@@ -6,14 +6,27 @@ import { createClient } from '../lib/supabase/client';
 
 export default function SignOutButton() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   async function signOut() {
     setLoading(true);
-    await createClient().auth.signOut();
-    router.replace('/login');
-    router.refresh();
+    setError('');
+    try {
+      const { error: signOutError } = await createClient().auth.signOut();
+      if (signOutError) throw signOutError;
+      router.replace('/login');
+      router.refresh();
+    } catch {
+      setError('Could not sign out. Check your connection and try again.');
+      setLoading(false);
+    }
   }
 
-  return <button className="button secondary" onClick={signOut} disabled={loading}>{loading ? 'Signing out…' : 'Sign out'}</button>;
+  return (
+    <div className="signout-control">
+      <button className="button secondary" onClick={signOut} disabled={loading}>{loading ? 'Signing out…' : 'Sign out'}</button>
+      {error ? <span className="signout-error" role="alert">{error}</span> : null}
+    </div>
+  );
 }
