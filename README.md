@@ -1,6 +1,6 @@
 # hlpr — Hunter College edition
 
-HLPR helps Hunter students find classmates, share a syllabus page, and maintain a collaborative task board for each course section.
+HLPR is a private class workspace for Hunter College students. Students can find their course section, talk with classmates, maintain shared tasks, and collaborate on a living syllabus from one responsive dashboard.
 
 ## Stack
 
@@ -13,22 +13,39 @@ HLPR helps Hunter students find classmates, share a syllabus page, and maintain 
 
 1. Install dependencies with `npm install`.
 2. Copy `.env.example` to `.env.local`.
-3. Add the Supabase project URL and publishable key.
-4. Run `supabase/schema.sql` in a new Supabase project if the database has not been provisioned.
-5. Start the app with `npm run dev`.
+3. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to the values from the Supabase project API settings.
+4. Run `supabase/schema.sql` in the Supabase SQL editor if the database has not been provisioned.
+5. In Supabase Auth, add `http://localhost:3000/auth/confirm` as an allowed redirect URL.
+6. Start the app with `npm run dev` and open `http://localhost:3000`.
 
-Only `@myhunter.cuny.edu` and `@login.cuny.edu` addresses can create accounts. The restriction is checked in the interface and enforced inside the database user-creation transaction. Never place a Supabase secret or service-role key in a `NEXT_PUBLIC_` variable.
+## Authentication and security
+
+- Registration accepts `@myhunter.cuny.edu` and `@login.cuny.edu` addresses.
+- New accounts confirm their email through `/auth/confirm` before signing in.
+- The allowed-domain rule is checked in the interface and enforced by the database user-creation trigger.
+- Protected pages validate the user on the server and refresh Supabase auth cookies through the proxy.
+- Row-level security limits class content to enrolled students; privileged RPC functions have explicit grants.
+- Never place a Supabase secret or service-role key in a `NEXT_PUBLIC_` variable or commit it to the repository.
 
 ## Included features
 
-- Hunter and CUNY Login email/password registration and sign-in
-- Protected server-rendered routes and refreshed auth cookies
-- Find-or-create class joining through a race-safe database function
-- Personal class dashboard and sign out
-- Private class roster visible only to enrolled students
-- Shared syllabus with debounced save status
-- Shared task creation and completion
-- Row-level security and restricted privileged functions
+- Hunter and CUNY Login email/password registration, confirmation, sign-in, resend, and reliable sign-out
+- Find-or-create class joining with a live section preview
+- Responsive class dashboard with section, semester, and professor details
+- Realtime class discussions with nested replies, search, and drafting counters
+- Shared tasks with Open, Done, and All filters plus completion progress
+- Shared syllabus with autosave status, word count, and one-click copy
+- Private searchable class roster visible only to enrolled students
+- Keyboard skip navigation, visible focus states, responsive layouts, and branded page recovery
+
+## Deploying to Vercel
+
+1. Import this repository into Vercel and keep the framework preset set to Next.js.
+2. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to the Production, Preview, and Development environments.
+3. Add `https://<your-domain>/auth/confirm` to the Supabase Auth redirect allow list.
+4. Deploy. Vercel runs `npm run build` automatically.
+
+The publishable key is safe to expose to the browser; authorization must remain enforced by Supabase row-level security. Do not add a service-role key to Vercel variables used by client code.
 
 ## Verification
 
@@ -37,4 +54,4 @@ npm run lint
 npm run build
 ```
 
-Both commands pass in the completed project.
+Run both commands before pushing changes to `main`.
