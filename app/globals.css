@@ -273,3 +273,13 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .syllabus-toolbar button { width: 100%; min-height: 38px; }
   .roster-grid { grid-template-columns: 1fr; }
 }
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
