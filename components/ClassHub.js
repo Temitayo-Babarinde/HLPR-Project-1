@@ -190,7 +190,8 @@ export default function ClassHub({ section }) {
     setPosting(false);
   }
 
-  async function addTask() {
+  async function addTask(event) {
+    event.preventDefault();
     if (!newTask.trim() || !userId) return;
     const { data, error: taskError } = await supabase.from('tasks').insert({
       section_id: section.id, title: newTask.trim(), created_by: userId,
@@ -334,12 +335,16 @@ export default function ClassHub({ section }) {
                   <span style={{ width: `${taskStats.total ? (taskStats.completed / taskStats.total) * 100 : 0}%` }} />
                 </div>
               </div>
-              <div className="task-entry"><input value={newTask} onChange={(event) => setNewTask(event.target.value)} onKeyDown={(event) => event.key === 'Enter' && addTask()} placeholder="Add an assignment or reminder…" /><button onClick={addTask}>Add</button></div>
+              <form className="task-entry" onSubmit={addTask}>
+                <label className="sr-only" htmlFor="new-class-task">New class task</label>
+                <input id="new-class-task" value={newTask} onChange={(event) => setNewTask(event.target.value)} placeholder="Add an assignment or reminder…" required />
+                <button type="submit">Add</button>
+              </form>
               <div className="task-filters" aria-label="Filter class tasks">
                 {[['open', `Open ${taskStats.open}`], ['done', `Done ${taskStats.completed}`], ['all', `All ${taskStats.total}`]].map(([key, label]) => <button key={key} className={taskFilter === key ? 'active' : ''} aria-pressed={taskFilter === key} onClick={() => setTaskFilter(key)}>{label}</button>)}
               </div>
               <div className="task-list">
-                {visibleTasks.map((task) => <button key={task.id} className={task.is_done ? 'task done' : 'task'} onClick={() => toggleTask(task)}><span>{task.is_done ? '✓' : ''}</span><p>{task.title}</p></button>)}
+                {visibleTasks.map((task) => <button key={task.id} type="button" className={task.is_done ? 'task done' : 'task'} aria-pressed={task.is_done} aria-label={`Complete task: ${task.title}`} onClick={() => toggleTask(task)}><span aria-hidden="true">{task.is_done ? '✓' : ''}</span><p>{task.title}</p></button>)}
                 {tasks.length === 0 ? <div className="empty-state"><div>✓</div><h3>Nothing due yet</h3><p>Add the first task for your class.</p></div> : null}
                 {tasks.length > 0 && visibleTasks.length === 0 ? <div className="empty-state compact"><div>✓</div><h3>{taskFilter === 'open' ? 'Everything is complete' : 'No completed tasks yet'}</h3><p>{taskFilter === 'open' ? 'Nice work. Completed tasks are saved under Done.' : 'Finish a task and it will appear here.'}</p></div> : null}
               </div>
