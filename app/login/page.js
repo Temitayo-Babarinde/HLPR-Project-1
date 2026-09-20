@@ -45,7 +45,7 @@ export default function LoginPage() {
         setLoading(false);
         return;
       }
-      setMessage('Check your Hunter inbox to confirm your account, then come back and sign in.');
+      setMessage('Check your CUNY email inbox to confirm your account, then come back and sign in.');
       setMode('signin');
       setLoading(false);
       return;
@@ -89,9 +89,14 @@ export default function LoginPage() {
         </p>
 
         {mode === 'signup' && (
-          <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full name" autoComplete="name" required style={inputStyle} />
+          <>
+            <label className="sr-only" htmlFor="login-full-name">Full name</label>
+            <input id="login-full-name" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Full name" autoComplete="name" required style={inputStyle} />
+          </>
         )}
+        <label className="sr-only" htmlFor="login-email">CUNY email address</label>
         <input
+          id="login-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -101,7 +106,9 @@ export default function LoginPage() {
           style={inputStyle}
         />
         <div className="password-field">
+          <label className="sr-only" htmlFor="login-password">Password</label>
           <input
+            id="login-password"
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -122,8 +129,8 @@ export default function LoginPage() {
           </button>
         </div>
 
-        {error && <p className="error">{error}</p>}
-        {message && <p className="success">{message}</p>}
+        {error && <p className="error" role="alert">{error}</p>}
+        {message && <p className="success" role="status">{message}</p>}
         {message && mode === 'signin' && email && (
           <button type="button" onClick={resendConfirmation} disabled={resending} style={{ ...buttonStyle, background: '#fff', color: '#3F0157', border: '1px solid #e5e7eb', marginBottom: 10 }}>
             {resending ? 'Sending…' : 'Resend confirmation email'}
