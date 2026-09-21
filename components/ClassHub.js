@@ -48,6 +48,17 @@ export default function ClassHub({ section }) {
   const [copyState, setCopyState] = useState('idle');
   const [userId, setUserId] = useState(null);
   const loadedSyllabus = useRef(false);
+  const conversationRef = useRef(null);
+
+  function openConversation(threadId) {
+    setSelectedThreadId(threadId);
+    if (window.matchMedia('(max-width: 680px)').matches) {
+      conversationRef.current?.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    }
+  }
 
   const loadDiscussion = useCallback(async () => {
     const [{ data: threadRows, error: threadError }, { data: messageRows, error: messageError }] = await Promise.all([
@@ -247,7 +258,7 @@ export default function ClassHub({ section }) {
           {tab === 'discussion' ? (
             <div className="discussion-grid">
               <aside className="thread-list">
-                <div className="section-heading"><div><span>Class forum</span><h2>Discussion</h2></div><button onClick={() => setSelectedThreadId(null)}>+ New</button></div>
+                <div className="section-heading"><div><span>Class forum</span><h2>Discussion</h2></div><button onClick={() => openConversation(null)}>+ New</button></div>
                 <label className="thread-search">
                   <span className="sr-only">Search discussions</span>
                   <span aria-hidden="true">⌕</span>
@@ -256,7 +267,7 @@ export default function ClassHub({ section }) {
                 {filteredThreads.map((thread) => {
                   const count = messages.filter((message) => message.thread_id === thread.id).length;
                   return (
-                    <button key={thread.id} className={selectedThreadId === thread.id ? 'thread-card active' : 'thread-card'} onClick={() => setSelectedThreadId(thread.id)}>
+                    <button key={thread.id} className={selectedThreadId === thread.id ? 'thread-card active' : 'thread-card'} onClick={() => openConversation(thread.id)}>
                       <strong>{thread.title}</strong>
                       <span>{people.get(thread.created_by)?.full_name || 'Classmate'} · {relativeTime(thread.created_at)}</span>
                       <small>{count} {count === 1 ? 'message' : 'messages'}</small>
@@ -267,7 +278,7 @@ export default function ClassHub({ section }) {
                 {threads.length > 0 && filteredThreads.length === 0 ? <div className="empty-mini">No discussions match “{threadQuery.trim()}”.</div> : null}
               </aside>
 
-              <div className="conversation-panel">
+              <div className="conversation-panel" ref={conversationRef}>
                 {!selectedThread ? (
                   <form className="new-thread" onSubmit={createThread}>
                     <span className="eyebrow">Start a conversation</span>
