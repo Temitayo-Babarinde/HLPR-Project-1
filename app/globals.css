@@ -233,6 +233,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .syllabus-editor { width: 100%; min-height: 420px; padding: 18px; border: 1px solid var(--line); border-radius: 12px; outline: 0; resize: vertical; background: #fdfcfd; color: #403744; font: 13px/1.7 Arial, sans-serif; }
 .syllabus-editor:focus { border-color: #b999c2; box-shadow: 0 0 0 3px rgba(63,1,87,.07); }
 .save-error { color: #b42318 !important; }
+.save-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.save-actions b { color: #817685; font-size: 11px; }
+.save-actions button { padding: 6px 9px; border: 1px solid #dfd2e3; border-radius: 8px; background: #fff; color: var(--purple); font-size: 11px; font-weight: 800; cursor: pointer; }
+.save-actions button:hover { border-color: #b998c2; background: #f7f0f8; }
 .roster-toolbar { margin: -3px 0 14px; display: flex; align-items: center; gap: 12px; }
 .roster-search { min-width: 0; height: 42px; flex: 1; padding: 0 12px; display: flex; align-items: center; gap: 8px; border: 1px solid #e2dbe5; border-radius: 11px; background: #fbfafb; color: #9b8fa0; }
 .roster-search:focus-within { border-color: #b999c2; background: white; box-shadow: 0 0 0 3px rgba(63,1,87,.07); }
