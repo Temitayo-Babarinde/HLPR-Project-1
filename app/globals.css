@@ -82,6 +82,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .dashboard-empty .eyebrow { margin: 0; }
 .dashboard-empty h2 { margin: 7px 0; font-size: 24px; letter-spacing: -.04em; }
 .dashboard-empty > p:not(.eyebrow) { max-width: 430px; margin: 0 auto 20px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.dashboard-error > div { background: #f8eceb; color: #a9382c; font-size: 21px; font-weight: 900; }
+.dashboard-error .dashboard-join { min-width: 112px; }
 .password-field { position: relative; margin-bottom: 10px; }
 .password-field input { padding-right: 68px !important; }
 .password-field:focus-within input { border-color: #b999c2 !important; box-shadow: 0 0 0 3px rgba(63,1,87,.07); }
