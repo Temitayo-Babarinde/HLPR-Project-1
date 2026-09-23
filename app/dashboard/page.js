@@ -30,9 +30,15 @@ export default async function DashboardPage() {
           <div className="dashboard-actions"><SignOutButton /><Link href="/join" className="dashboard-join">+ Join a class</Link></div>
         </header>
 
-        {error && <p className="error">We could not load your classes. Refresh and try again.</p>}
-
-        {classes.length === 0 ? (
+        {error ? (
+          <section className="dashboard-empty dashboard-error" role="alert">
+            <div aria-hidden="true">!</div>
+            <p className="eyebrow">Classes unavailable</p>
+            <h2>We couldn’t load your class spaces</h2>
+            <p>Your classes are still safe. This is usually temporary, so try loading them again.</p>
+            <Link href="/dashboard" className="dashboard-join">Try again</Link>
+          </section>
+        ) : classes.length === 0 ? (
           <section className="dashboard-empty">
             <div aria-hidden="true">+</div>
             <p className="eyebrow">Build your semester</p>
