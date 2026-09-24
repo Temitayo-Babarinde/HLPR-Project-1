@@ -51,6 +51,19 @@ export default function ClassHub({ section }) {
   const loadedSyllabus = useRef(false);
   const conversationRef = useRef(null);
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const requestedTab = window.location.hash.slice(1);
+      if (TABS.some((item) => item.key === requestedTab)) setTab(requestedTab);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  function selectTab(nextTab) {
+    setTab(nextTab);
+    window.history.replaceState(null, '', `#${nextTab}`);
+  }
+
   function openConversation(threadId) {
     setSelectedThreadId(threadId);
     if (window.matchMedia('(max-width: 680px)').matches) {
@@ -246,7 +259,7 @@ export default function ClassHub({ section }) {
       <div className="class-layout">
         <nav className="class-tabs" aria-label="Class areas">
           {TABS.map((item) => (
-            <button key={item.key} className={tab === item.key ? 'active' : ''} onClick={() => setTab(item.key)}>
+            <button key={item.key} type="button" className={tab === item.key ? 'active' : ''} aria-pressed={tab === item.key} onClick={() => selectTab(item.key)}>
               <span>{item.icon}</span>{item.label}
               {item.key === 'discussion' && threads.length > 0 ? <em>{threads.length}</em> : null}
             </button>
