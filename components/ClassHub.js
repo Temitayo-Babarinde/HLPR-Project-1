@@ -137,6 +137,8 @@ export default function ClassHub({ section }) {
   const selectedThread = threads.find((thread) => thread.id === selectedThreadId);
   const selectedMessages = messages.filter((message) => message.thread_id === selectedThreadId);
   const roots = selectedMessages.filter((message) => !message.parent_message_id);
+  const replyTarget = replyTo ? selectedMessages.find((message) => message.id === replyTo) : null;
+  const replyTargetAuthor = replyTarget ? people.get(replyTarget.created_by) : null;
   const filteredThreads = useMemo(() => {
     const query = threadQuery.trim().toLowerCase();
     if (!query) return threads;
@@ -338,7 +340,7 @@ export default function ClassHub({ section }) {
                       })}
                     </div>
                     <form className="reply-box" onSubmit={postReply}>
-                      {replyTo ? <div className="replying">Replying to a message <button type="button" onClick={() => setReplyTo(null)}>Cancel</button></div> : null}
+                      {replyTarget ? <div className="replying"><div><span>Replying to <strong>{replyTargetAuthor?.full_name || replyTargetAuthor?.email || 'Classmate'}</strong></span><small>“{replyTarget.body.length > 90 ? `${replyTarget.body.slice(0, 90)}…` : replyTarget.body}”</small></div><button type="button" onClick={() => setReplyTo(null)}>Cancel</button></div> : null}
                       <textarea value={replyBody} onChange={(event) => setReplyBody(event.target.value)} placeholder="Write a reply…" rows={3} maxLength={4000} aria-describedby="reply-count" required />
                       <div className="reply-actions">
                         <span id="reply-count" className="composer-count">{replyBody.length.toLocaleString()} / 4,000</span>
