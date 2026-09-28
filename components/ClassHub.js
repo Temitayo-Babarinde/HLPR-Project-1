@@ -269,7 +269,12 @@ export default function ClassHub({ section }) {
         </nav>
 
         <section className="class-content">
-          {error ? <div className="error banner">{error}<button onClick={() => setError('')}>×</button></div> : null}
+          {error ? (
+            <div className="error banner" role="alert">
+              <span>{error}</span>
+              <button type="button" onClick={() => setError('')} aria-label="Dismiss error message">×</button>
+            </div>
+          ) : null}
 
           {tab === 'discussion' ? (
             <div className="discussion-grid">
