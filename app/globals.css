@@ -218,6 +218,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .task-entry { display: flex; gap: 8px; padding: 9px; border: 1px solid var(--line); border-radius: 12px; background: #fbfafb; }
 .task-entry input { min-width: 0; flex: 1; padding: 5px 8px; border: 0; outline: 0; background: transparent; font-size: 13px; }
 .task-entry button { padding: 8px 14px; border: 0; border-radius: 8px; background: var(--purple); color: white; font-size: 11px; font-weight: 800; cursor: pointer; }
+.task-entry button:disabled { cursor: wait; opacity: .68; }
 .task-filters { margin-top: 14px; padding: 3px; display: inline-flex; gap: 2px; border-radius: 9px; background: #f2edf3; }
 .task-filters button { padding: 6px 10px; border: 0; border-radius: 7px; background: transparent; color: #817586; font-size: 10px; font-weight: 800; cursor: pointer; }
 .task-filters button.active { background: white; color: var(--purple); box-shadow: 0 2px 8px rgba(49,0,67,.09); }
