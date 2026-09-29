@@ -41,6 +41,7 @@ export default function ClassHub({ section }) {
   const [replyTo, setReplyTo] = useState(null);
   const [newTask, setNewTask] = useState('');
   const [taskFilter, setTaskFilter] = useState('open');
+  const [addingTask, setAddingTask] = useState(false);
   const [loading, setLoading] = useState(true);
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState('');
@@ -219,13 +220,18 @@ export default function ClassHub({ section }) {
 
   async function addTask(event) {
     event.preventDefault();
-    if (!newTask.trim() || !userId) return;
+    if (!newTask.trim() || !userId || addingTask) return;
+    setAddingTask(true);
+    setError('');
     const { data, error: taskError } = await supabase.from('tasks').insert({
       section_id: section.id, title: newTask.trim(), created_by: userId,
     }).select().single();
-    if (data) setTasks((previous) => [...previous, data]);
-    if (taskError) setError('That task could not be added.');
-    setNewTask('');
+    if (taskError) setError('That task could not be added. Your draft is still here so you can try again.');
+    else if (data) {
+      setTasks((previous) => [...previous, data]);
+      setNewTask('');
+    }
+    setAddingTask(false);
   }
 
   async function toggleTask(task) {
@@ -369,8 +375,8 @@ export default function ClassHub({ section }) {
               </div>
               <form className="task-entry" onSubmit={addTask}>
                 <label className="sr-only" htmlFor="new-class-task">New class task</label>
-                <input id="new-class-task" value={newTask} onChange={(event) => setNewTask(event.target.value)} placeholder="Add an assignment or reminder…" required />
-                <button type="submit">Add</button>
+                <input id="new-class-task" value={newTask} onChange={(event) => setNewTask(event.target.value)} placeholder="Add an assignment or reminder…" disabled={addingTask} required />
+                <button type="submit" disabled={addingTask}>{addingTask ? 'Adding…' : 'Add'}</button>
               </form>
               <div className="task-filters" aria-label="Filter class tasks">
                 {[['open', `Open ${taskStats.open}`], ['done', `Done ${taskStats.completed}`], ['all', `All ${taskStats.total}`]].map(([key, label]) => <button key={key} className={taskFilter === key ? 'active' : ''} aria-pressed={taskFilter === key} onClick={() => setTaskFilter(key)}>{label}</button>)}
