@@ -75,6 +75,15 @@ export default function LoginPage() {
     else setMessage('Confirmation email resent. Check your inbox and spam folder.');
   }
 
+  function switchMode() {
+    if (loading || resending) return;
+    setMode((current) => current === 'signup' ? 'signin' : 'signup');
+    setPassword('');
+    setShowPassword(false);
+    setError('');
+    setMessage('');
+  }
+
   return (
     <main className="shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <form
@@ -143,8 +152,9 @@ export default function LoginPage() {
 
         <button
           type="button"
-          onClick={() => setMode(mode === 'signup' ? 'signin' : 'signup')}
-          style={{ marginTop: 12, background: 'none', border: 'none', color: '#3F0157', fontSize: 13, cursor: 'pointer', width: '100%' }}
+          className="login-mode-toggle"
+          onClick={switchMode}
+          disabled={loading || resending}
         >
           {mode === 'signup' ? 'Already have an account? Sign in' : "Don't have an account? Create one"}
         </button>
