@@ -177,6 +177,19 @@ export default function ClassHub({ section }) {
     }
   }
 
+  function downloadSyllabus() {
+    const blob = new Blob([syllabus], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const courseName = `${section.courses.department}-${section.courses.number}-syllabus`
+      .toLowerCase()
+      .replace(/[^a-z0-9-]+/g, '-');
+    link.href = url;
+    link.download = `${courseName}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function createThread(event) {
     event.preventDefault();
     if (!newThreadTitle.trim() || !newThreadBody.trim() || !userId) return;
@@ -394,7 +407,10 @@ export default function ClassHub({ section }) {
               <div className="section-heading"><div><span>Living document</span><h2>Shared syllabus</h2></div><div className="save-actions"><b className={saveState === 'error' ? 'save-error' : ''} role="status">{saveState === 'saving' ? 'Saving…' : saveState === 'error' ? 'Save failed' : 'Saved'}</b>{saveState === 'error' ? <button type="button" onClick={() => setSaveAttempt((attempt) => attempt + 1)}>Retry save</button> : null}</div></div>
               <div className="syllabus-toolbar">
                 <div><strong>{syllabusWords} {syllabusWords === 1 ? 'word' : 'words'}</strong><span>{syllabus.length.toLocaleString()} characters · Autosaves as you type</span></div>
-                <button type="button" onClick={copySyllabus} disabled={!syllabus} aria-live="polite">{copyState === 'copied' ? '✓ Copied' : copyState === 'error' ? 'Copy failed' : 'Copy syllabus'}</button>
+                <div className="syllabus-actions">
+                  <button type="button" onClick={downloadSyllabus} disabled={!syllabus}>Download .txt</button>
+                  <button type="button" onClick={copySyllabus} disabled={!syllabus} aria-live="polite">{copyState === 'copied' ? '✓ Copied' : copyState === 'error' ? 'Copy failed' : 'Copy syllabus'}</button>
+                </div>
               </div>
               <textarea className="syllabus-editor" value={syllabus} onChange={(event) => { setSyllabus(event.target.value); setCopyState('idle'); }} rows={18} placeholder="Add grading details, weekly topics, office hours, and important dates…" aria-label="Shared syllabus content" />
             </div>
