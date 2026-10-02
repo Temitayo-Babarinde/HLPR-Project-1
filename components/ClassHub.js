@@ -427,7 +427,16 @@ export default function ClassHub({ section }) {
                 {rosterQuery.trim() ? <span aria-live="polite">{filteredRoster.length} found</span> : null}
               </div>
               <div className="roster-grid">
-                {filteredRoster.map((person) => <div className="person-card" key={person.id}><div className="avatar large">{initials(person)}</div><div><strong>{person.full_name || 'Classmate'}</strong><span>{person.email}{person.isMe ? ' · You' : ''}</span></div></div>)}
+                {filteredRoster.map((person) => {
+                  const displayName = person.full_name || 'Classmate';
+                  return (
+                    <div className="person-card" key={person.id}>
+                      <div className="avatar large">{initials(person)}</div>
+                      <div className="person-card-info"><strong>{displayName}</strong><span>{person.email}{person.isMe ? ' · You' : ''}</span></div>
+                      {!person.isMe && person.email ? <a href={`mailto:${person.email}`} aria-label={`Email ${displayName}`}>Email</a> : null}
+                    </div>
+                  );
+                })}
               </div>
               {roster.length > 0 && filteredRoster.length === 0 ? <div className="empty-state compact"><div aria-hidden="true">⌕</div><h3>No classmates found</h3><p>Try a different name or email.</p></div> : null}
             </div>
