@@ -261,10 +261,13 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .roster-toolbar > span { flex: 0 0 auto; color: #785083; font-size: 10px; font-weight: 850; }
 .roster-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .person-card { min-width: 0; display: flex; align-items: center; gap: 12px; padding: 13px; border: 1px solid #eee9ef; border-radius: 12px; background: #fcfbfc; }
-.person-card > div:last-child { min-width: 0; }
+.person-card-info { min-width: 0; flex: 1; }
 .person-card strong, .person-card span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .person-card strong { color: #3b323e; font-size: 12px; }
 .person-card span { margin-top: 4px; color: #9b929d; font-size: 9px; }
+.person-card > a { flex: 0 0 auto; padding: 7px 9px; border: 1px solid #e0d4e3; border-radius: 8px; background: white; color: var(--purple); font-size: 10px; font-weight: 850; text-decoration: none; }
+.person-card > a:hover { border-color: #b998c2; background: #f7f0f8; }
+.person-card > a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .app-loading { min-height: 100vh; display: grid; place-content: center; justify-items: center; background: #260333; color: rgba(255,255,255,.65); font-size: 12px; }
 .loading-mark { width: 47px; height: 47px; display: grid; place-items: center; border-radius: 14px; background: var(--gold); color: var(--purple); font-size: 26px; font-weight: 950; }
 
