@@ -337,6 +337,13 @@ export default function ClassHub({ section }) {
                   <>
                     <div className="conversation-header"><span className="eyebrow">Thread</span><h2>{selectedThread.title}</h2></div>
                     <div className="message-stream">
+                      {roots.length === 0 ? (
+                        <div className="message-empty">
+                          <div aria-hidden="true">◌</div>
+                          <h3>Start this conversation</h3>
+                          <p>No messages have been posted yet. Share the first thought or question below.</p>
+                        </div>
+                      ) : null}
                       {roots.map((message) => {
                         const author = people.get(message.created_by);
                         const replies = selectedMessages.filter((item) => item.parent_message_id === message.id);
