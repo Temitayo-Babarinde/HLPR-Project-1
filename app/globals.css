@@ -191,6 +191,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .composer-field .composer-count { justify-self: end; margin-right: 3px; }
 .new-thread .button { align-self: flex-end; }
 .message-stream { flex: 1; padding: 12px 24px 24px; overflow-y: auto; max-height: 490px; }
+.message-empty { min-height: 260px; padding: 36px 20px; display: grid; place-content: center; justify-items: center; color: #918696; text-align: center; }
+.message-empty > div { width: 44px; height: 44px; margin-bottom: 12px; display: grid; place-items: center; border-radius: 14px; background: #f1e7f3; color: var(--purple); font-size: 21px; }
+.message-empty h3 { margin: 0; color: #4d4450; font-size: 15px; }
+.message-empty p { max-width: 330px; margin: 7px 0 0; font-size: 12px; line-height: 1.55; }
 .message-group { padding: 17px 0; border-bottom: 1px solid #f0ecf1; }
 .message-row { display: flex; gap: 12px; }
 .message-row.reply { margin: 14px 0 0 44px; padding: 12px; border-left: 2px solid #eaddec; background: #fbf8fb; border-radius: 0 10px 10px 0; }
