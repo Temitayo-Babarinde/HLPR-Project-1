@@ -24,6 +24,13 @@ function relativeTime(date) {
   return new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
+function fullTime(date) {
+  return new Date(date).toLocaleString(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+}
+
 export default function ClassHub({ section }) {
   const supabase = useMemo(() => createClient(), []);
   const [tab, setTab] = useState('discussion');
@@ -309,7 +316,12 @@ export default function ClassHub({ section }) {
                   return (
                     <button key={thread.id} className={selectedThreadId === thread.id ? 'thread-card active' : 'thread-card'} onClick={() => openConversation(thread.id)}>
                       <strong>{thread.title}</strong>
-                      <span>{people.get(thread.created_by)?.full_name || 'Classmate'} · {relativeTime(thread.created_at)}</span>
+                      <span>
+                        {people.get(thread.created_by)?.full_name || 'Classmate'} ·{' '}
+                        <time dateTime={thread.created_at} title={fullTime(thread.created_at)} aria-label={fullTime(thread.created_at)}>
+                          {relativeTime(thread.created_at)}
+                        </time>
+                      </span>
                       <small>{count} {count === 1 ? 'message' : 'messages'}</small>
                     </button>
                   );
@@ -352,7 +364,12 @@ export default function ClassHub({ section }) {
                             <div className="message-row">
                               <div className="avatar">{initials(author)}</div>
                               <div className="message-copy">
-                                <div><strong>{author?.full_name || author?.email || 'Classmate'}</strong><time>{relativeTime(message.created_at)}</time></div>
+                                <div>
+                                  <strong>{author?.full_name || author?.email || 'Classmate'}</strong>
+                                  <time dateTime={message.created_at} title={fullTime(message.created_at)} aria-label={fullTime(message.created_at)}>
+                                    {relativeTime(message.created_at)}
+                                  </time>
+                                </div>
                                 <p>{message.body}</p>
                                 <button onClick={() => setReplyTo(message.id)}>Reply</button>
                               </div>
@@ -362,7 +379,15 @@ export default function ClassHub({ section }) {
                               return (
                                 <div className="message-row reply" key={reply.id}>
                                   <div className="avatar small">{initials(replyAuthor)}</div>
-                                  <div className="message-copy"><div><strong>{replyAuthor?.full_name || 'Classmate'}</strong><time>{relativeTime(reply.created_at)}</time></div><p>{reply.body}</p></div>
+                                  <div className="message-copy">
+                                    <div>
+                                      <strong>{replyAuthor?.full_name || 'Classmate'}</strong>
+                                      <time dateTime={reply.created_at} title={fullTime(reply.created_at)} aria-label={fullTime(reply.created_at)}>
+                                        {relativeTime(reply.created_at)}
+                                      </time>
+                                    </div>
+                                    <p>{reply.body}</p>
+                                  </div>
                                 </div>
                               );
                             })}
