@@ -67,6 +67,13 @@ export default function ClassHub({ section }) {
     return () => window.clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const previousTitle = document.title;
+    const activeArea = TABS.find((item) => item.key === tab)?.label || 'Class';
+    document.title = `${section.courses.department} ${section.courses.number} · ${activeArea} | HLPR`;
+    return () => { document.title = previousTitle; };
+  }, [section.courses.department, section.courses.number, tab]);
+
   function selectTab(nextTab) {
     setTab(nextTab);
     window.history.replaceState(null, '', `#${nextTab}`);
