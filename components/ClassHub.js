@@ -49,6 +49,7 @@ export default function ClassHub({ section }) {
   const [newTask, setNewTask] = useState('');
   const [taskFilter, setTaskFilter] = useState('open');
   const [addingTask, setAddingTask] = useState(false);
+  const [updatingTaskId, setUpdatingTaskId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState('');
@@ -262,11 +263,18 @@ export default function ClassHub({ section }) {
   }
 
   async function toggleTask(task) {
+    if (updatingTaskId) return;
+    setUpdatingTaskId(task.id);
+    setError('');
     setTasks((previous) => previous.map((item) => item.id === task.id ? { ...item, is_done: !item.is_done } : item));
-    const { error: taskError } = await supabase.from('tasks').update({ is_done: !task.is_done }).eq('id', task.id);
-    if (taskError) {
+    try {
+      const { error: taskError } = await supabase.from('tasks').update({ is_done: !task.is_done }).eq('id', task.id);
+      if (taskError) throw taskError;
+    } catch {
       setTasks((previous) => previous.map((item) => item.id === task.id ? task : item));
       setError('That task could not be updated.');
+    } finally {
+      setUpdatingTaskId(null);
     }
   }
 
@@ -434,7 +442,25 @@ export default function ClassHub({ section }) {
                 {[['open', `Open ${taskStats.open}`], ['done', `Done ${taskStats.completed}`], ['all', `All ${taskStats.total}`]].map(([key, label]) => <button key={key} className={taskFilter === key ? 'active' : ''} aria-pressed={taskFilter === key} onClick={() => setTaskFilter(key)}>{label}</button>)}
               </div>
               <div className="task-list">
-                {visibleTasks.map((task) => <button key={task.id} type="button" className={task.is_done ? 'task done' : 'task'} aria-pressed={task.is_done} aria-label={`Complete task: ${task.title}`} onClick={() => toggleTask(task)}><span aria-hidden="true">{task.is_done ? '✓' : ''}</span><p>{task.title}</p></button>)}
+                {visibleTasks.map((task) => {
+                  const isUpdating = updatingTaskId === task.id;
+                  const action = task.is_done ? 'Mark incomplete' : 'Mark complete';
+                  return (
+                    <button
+                      key={task.id}
+                      type="button"
+                      className={task.is_done ? 'task done' : 'task'}
+                      aria-pressed={task.is_done}
+                      aria-label={isUpdating ? `Saving task: ${task.title}` : `${action}: ${task.title}`}
+                      disabled={Boolean(updatingTaskId)}
+                      onClick={() => toggleTask(task)}
+                    >
+                      <span aria-hidden="true">{task.is_done ? '✓' : ''}</span>
+                      <p>{task.title}</p>
+                      {isUpdating ? <em className="task-saving" aria-hidden="true">Saving…</em> : null}
+                    </button>
+                  );
+                })}
                 {tasks.length === 0 ? <div className="empty-state"><div>✓</div><h3>Nothing due yet</h3><p>Add the first task for your class.</p></div> : null}
                 {tasks.length > 0 && visibleTasks.length === 0 ? <div className="empty-state compact"><div>✓</div><h3>{taskFilter === 'open' ? 'Everything is complete' : 'No completed tasks yet'}</h3><p>{taskFilter === 'open' ? 'Nice work. Completed tasks are saved under Done.' : 'Finish a task and it will appear here.'}</p></div> : null}
               </div>
