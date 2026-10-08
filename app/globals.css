@@ -253,8 +253,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .task-filters button.active { background: white; color: var(--purple); box-shadow: 0 2px 8px rgba(49,0,67,.09); }
 .task-list { margin-top: 10px; }
 .task { width: 100%; display: flex; align-items: center; gap: 11px; padding: 13px 7px; border: 0; border-bottom: 1px solid #f0ecf1; background: transparent; text-align: left; cursor: pointer; }
+.task:disabled { cursor: wait !important; opacity: .72; }
 .task > span { width: 19px; height: 19px; display: grid; place-items: center; border: 1.5px solid #d2c8d6; border-radius: 6px; color: white; font-size: 11px; }
-.task p { margin: 0; color: #49404c; font-size: 13px; }
+.task p { min-width: 0; margin: 0; flex: 1; color: #49404c; font-size: 13px; }
+.task-saving { flex: 0 0 auto; color: #7b6881; font-size: 9px; font-style: normal; font-weight: 800; }
 .task.done > span { border-color: var(--purple); background: var(--purple); }
 .task.done p { color: #aaa1ac; text-decoration: line-through; }
 .empty-state { padding: 85px 20px; color: #928895; text-align: center; }
