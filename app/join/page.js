@@ -23,24 +23,26 @@ export default function JoinPage() {
 
   async function handleJoin(e) {
     e.preventDefault();
+    if (loading) return;
     setError('');
     setLoading(true);
 
-    const { data: sectionId, error: joinError } = await supabase.rpc('join_or_create_section', {
-      p_department: department,
-      p_number: number.trim(),
-      p_title: title.trim() || `${department} ${number.trim()}`,
-      p_section_number: section.trim(),
-      p_semester: semester.trim(),
-      p_professor_name: professor.trim() || null,
-    });
-    if (joinError) {
-      setError(joinError.message || 'Could not join this class.');
+    try {
+      const { data: sectionId, error: joinError } = await supabase.rpc('join_or_create_section', {
+        p_department: department,
+        p_number: number.trim(),
+        p_title: title.trim() || `${department} ${number.trim()}`,
+        p_section_number: section.trim(),
+        p_semester: semester.trim(),
+        p_professor_name: professor.trim() || null,
+      });
+      if (joinError || !sectionId) throw joinError || new Error('Missing section');
+      router.push(`/class/${sectionId}`);
+      router.refresh();
+    } catch {
+      setError('We couldn’t join this class. Check your connection and try again—your details are still here.');
       setLoading(false);
-      return;
     }
-    router.push(`/class/${sectionId}`);
-    router.refresh();
   }
 
   return (
@@ -55,7 +57,7 @@ export default function JoinPage() {
           If your section is missing, fill it in. The next classmate who searches for it lands in the same place.
         </p>
 
-        <form onSubmit={handleJoin} className="card join-card">
+        <form onSubmit={handleJoin} className="card join-card" aria-busy={loading}>
           <div className="join-preview" aria-live="polite">
             <span>{department} {courseNumber}</span>
             <strong>{courseTitle}</strong>
@@ -65,7 +67,7 @@ export default function JoinPage() {
           <div className="join-grid">
             <label>
               <span>Department</span>
-              <select value={department} onChange={(e) => setDepartment(e.target.value)}>
+              <select value={department} onChange={(e) => setDepartment(e.target.value)} disabled={loading}>
                 {DEPARTMENTS.map((d) => (
                   <option key={d} value={d}>{d}</option>
                 ))}
@@ -73,24 +75,24 @@ export default function JoinPage() {
             </label>
             <label>
               <span>Course number</span>
-              <input value={number} onChange={(e) => setNumber(e.target.value)} placeholder="12700" inputMode="numeric" autoComplete="off" required />
+              <input value={number} onChange={(e) => setNumber(e.target.value)} placeholder="12700" inputMode="numeric" autoComplete="off" disabled={loading} required />
             </label>
             <label>
               <span>Section</span>
-              <input value={section} onChange={(e) => setSection(e.target.value)} placeholder="01" autoComplete="off" required />
+              <input value={section} onChange={(e) => setSection(e.target.value)} placeholder="01" autoComplete="off" disabled={loading} required />
             </label>
             <label>
               <span>Semester</span>
-              <input value={semester} onChange={(e) => setSemester(e.target.value)} placeholder="Fall 2026" autoComplete="off" required />
+              <input value={semester} onChange={(e) => setSemester(e.target.value)} placeholder="Fall 2026" autoComplete="off" disabled={loading} required />
             </label>
           </div>
           <label className="join-field">
             <span>Course title <small>optional</small></span>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Software Analysis & Design" autoComplete="off" />
+            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Software Analysis & Design" autoComplete="off" disabled={loading} />
           </label>
           <label className="join-field">
             <span>Professor <small>optional</small></span>
-            <input value={professor} onChange={(e) => setProfessor(e.target.value)} placeholder="Professor's name" autoComplete="off" />
+            <input value={professor} onChange={(e) => setProfessor(e.target.value)} placeholder="Professor's name" autoComplete="off" disabled={loading} />
           </label>
 
           {error && <p className="error" role="alert">{error}</p>}
