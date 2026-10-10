@@ -31,6 +31,20 @@ export default function LoginPage() {
       return;
     }
 
+    if (mode === 'reset') {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+        redirectTo: `${window.location.origin}/auth/confirm?next=/reset-password`,
+      });
+      if (resetError) {
+        setError(resetError.message);
+        setLoading(false);
+        return;
+      }
+      setMessage('If an account exists for that email, a password reset link is on the way.');
+      setLoading(false);
+      return;
+    }
+
     if (mode === 'signup') {
       const { error } = await supabase.auth.signUp({
         email: normalizedEmail,
@@ -94,7 +108,11 @@ export default function LoginPage() {
         <div className="eyebrow">Hunter College</div>
         <h1 className="brand" style={{ margin: '7px 0 4px', fontSize: 32 }}>hlpr</h1>
         <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 20 }}>
-          {mode === 'signup' ? 'Create your account with your Hunter or CUNY Login email.' : 'Sign in with your Hunter or CUNY Login email.'}
+          {mode === 'signup'
+            ? 'Create your account with your Hunter or CUNY Login email.'
+            : mode === 'reset'
+              ? 'Enter your CUNY email and we’ll send a secure reset link.'
+              : 'Sign in with your Hunter or CUNY Login email.'}
         </p>
 
         {mode === 'signup' && (
@@ -114,7 +132,7 @@ export default function LoginPage() {
           required
           style={inputStyle}
         />
-        <div className="password-field">
+        {mode !== 'reset' && <div className="password-field">
           <label className="sr-only" htmlFor="login-password">Password</label>
           <input
             id="login-password"
@@ -136,7 +154,24 @@ export default function LoginPage() {
           >
             {showPassword ? 'Hide' : 'Show'}
           </button>
-        </div>
+        </div>}
+
+        {mode === 'signin' && (
+          <button
+            type="button"
+            className="forgot-password"
+            onClick={() => {
+              setMode('reset');
+              setPassword('');
+              setShowPassword(false);
+              setError('');
+              setMessage('');
+            }}
+            disabled={loading || resending}
+          >
+            Forgot password?
+          </button>
+        )}
 
         {error && <p className="error" role="alert">{error}</p>}
         {message && <p className="success" role="status">{message}</p>}
@@ -147,17 +182,32 @@ export default function LoginPage() {
         )}
 
         <button type="submit" disabled={loading} style={buttonStyle}>
-          {loading ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Sign in'}
+          {loading ? 'Please wait…' : mode === 'signup' ? 'Create account' : mode === 'reset' ? 'Send reset link' : 'Sign in'}
         </button>
 
-        <button
-          type="button"
-          className="login-mode-toggle"
-          onClick={switchMode}
-          disabled={loading || resending}
-        >
-          {mode === 'signup' ? 'Already have an account? Sign in' : "Don't have an account? Create one"}
-        </button>
+        {mode === 'reset' ? (
+          <button
+            type="button"
+            className="login-mode-toggle"
+            onClick={() => {
+              setMode('signin');
+              setError('');
+              setMessage('');
+            }}
+            disabled={loading}
+          >
+            Back to sign in
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="login-mode-toggle"
+            onClick={switchMode}
+            disabled={loading || resending}
+          >
+            {mode === 'signup' ? 'Already have an account? Sign in' : "Don't have an account? Create one"}
+          </button>
+        )}
       </form>
     </main>
   );

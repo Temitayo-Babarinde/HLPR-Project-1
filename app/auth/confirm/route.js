@@ -6,6 +6,7 @@ export async function GET(request) {
   const code = url.searchParams.get('code');
   const tokenHash = url.searchParams.get('token_hash');
   const type = url.searchParams.get('type');
+  const requestedNext = url.searchParams.get('next');
   const supabase = await createClient();
 
   let error;
@@ -17,6 +18,9 @@ export async function GET(request) {
     error = new Error('Missing confirmation token');
   }
 
-  const destination = new URL(error ? '/login?confirmation=failed' : '/dashboard', url.origin);
+  const safeNext = requestedNext?.startsWith('/') && !requestedNext.startsWith('//')
+    ? requestedNext
+    : type === 'recovery' ? '/reset-password' : '/dashboard';
+  const destination = new URL(error ? '/login?confirmation=failed' : safeNext, url.origin);
   return NextResponse.redirect(destination);
 }
