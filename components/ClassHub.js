@@ -58,7 +58,9 @@ export default function ClassHub({ section }) {
   const [copyState, setCopyState] = useState('idle');
   const [userId, setUserId] = useState(null);
   const loadedSyllabus = useRef(false);
+  const loadedThreadDraft = useRef(false);
   const conversationRef = useRef(null);
+  const threadDraftKey = `hlpr-thread-draft-${section.id}`;
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -67,6 +69,33 @@ export default function ClassHub({ section }) {
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      try {
+        const savedDraft = JSON.parse(window.sessionStorage.getItem(threadDraftKey) || 'null');
+        if (savedDraft) {
+          setNewThreadTitle(savedDraft.title || '');
+          setNewThreadBody(savedDraft.body || '');
+        }
+      } catch {
+        window.sessionStorage.removeItem(threadDraftKey);
+      } finally {
+        loadedThreadDraft.current = true;
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [threadDraftKey]);
+
+  useEffect(() => {
+    if (!loadedThreadDraft.current) return;
+    const draft = { title: newThreadTitle, body: newThreadBody };
+    if (draft.title.trim() || draft.body.trim()) {
+      window.sessionStorage.setItem(threadDraftKey, JSON.stringify(draft));
+    } else {
+      window.sessionStorage.removeItem(threadDraftKey);
+    }
+  }, [newThreadBody, newThreadTitle, threadDraftKey]);
 
   useEffect(() => {
     const previousTitle = document.title;
@@ -218,6 +247,7 @@ export default function ClassHub({ section }) {
         thread_id: thread.id, body: newThreadBody.trim(), created_by: userId,
       });
       if (!messageError) {
+        window.sessionStorage.removeItem(threadDraftKey);
         setNewThreadTitle('');
         setNewThreadBody('');
         setSelectedThreadId(thread.id);
@@ -358,6 +388,7 @@ export default function ClassHub({ section }) {
                       <textarea className="input" value={newThreadBody} onChange={(event) => setNewThreadBody(event.target.value)} placeholder="Ask a question, share a resource, or start a study thread…" rows={6} maxLength={4000} aria-describedby="topic-body-count" required />
                       <span id="topic-body-count" className="composer-count">{newThreadBody.length.toLocaleString()} / 4,000</span>
                     </div>
+                    {newThreadTitle.trim() || newThreadBody.trim() ? <p className="draft-note" role="status"><span aria-hidden="true">✓</span> Draft saved for this tab</p> : null}
                     <button className="button" disabled={posting}>{posting ? 'Posting…' : 'Post topic'}</button>
                   </form>
                 ) : (
