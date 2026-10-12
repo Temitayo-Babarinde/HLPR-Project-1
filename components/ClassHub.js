@@ -10,6 +10,7 @@ const TABS = [
   { key: 'syllabus', label: 'Syllabus', icon: '▤' },
   { key: 'roster', label: 'People', icon: '◎' },
 ];
+const EMPTY_MESSAGES = [];
 
 function initials(person) {
   const value = person?.full_name || person?.email || '?';
@@ -180,8 +181,30 @@ export default function ClassHub({ section }) {
 
   const people = useMemo(() => new Map(roster.map((person) => [person.id, person])), [roster]);
   const selectedThread = threads.find((thread) => thread.id === selectedThreadId);
-  const selectedMessages = messages.filter((message) => message.thread_id === selectedThreadId);
-  const roots = selectedMessages.filter((message) => !message.parent_message_id);
+  const messagesByThread = useMemo(() => {
+    const grouped = new Map();
+    messages.forEach((message) => {
+      const threadMessages = grouped.get(message.thread_id) || [];
+      threadMessages.push(message);
+      grouped.set(message.thread_id, threadMessages);
+    });
+    return grouped;
+  }, [messages]);
+  const selectedMessages = messagesByThread.get(selectedThreadId) || EMPTY_MESSAGES;
+  const { roots, repliesByParent } = useMemo(() => {
+    const rootMessages = [];
+    const groupedReplies = new Map();
+    selectedMessages.forEach((message) => {
+      if (!message.parent_message_id) {
+        rootMessages.push(message);
+        return;
+      }
+      const replies = groupedReplies.get(message.parent_message_id) || [];
+      replies.push(message);
+      groupedReplies.set(message.parent_message_id, replies);
+    });
+    return { roots: rootMessages, repliesByParent: groupedReplies };
+  }, [selectedMessages]);
   const replyTarget = replyTo ? selectedMessages.find((message) => message.id === replyTo) : null;
   const replyTargetAuthor = replyTarget ? people.get(replyTarget.created_by) : null;
   const filteredThreads = useMemo(() => {
@@ -357,7 +380,7 @@ export default function ClassHub({ section }) {
                   <input value={threadQuery} onChange={(event) => setThreadQuery(event.target.value)} placeholder="Search discussions" type="search" />
                 </label>
                 {filteredThreads.map((thread) => {
-                  const count = messages.filter((message) => message.thread_id === thread.id).length;
+                  const count = messagesByThread.get(thread.id)?.length || 0;
                   return (
                     <button key={thread.id} className={selectedThreadId === thread.id ? 'thread-card active' : 'thread-card'} onClick={() => openConversation(thread.id)}>
                       <strong>{thread.title}</strong>
@@ -404,7 +427,7 @@ export default function ClassHub({ section }) {
                       ) : null}
                       {roots.map((message) => {
                         const author = people.get(message.created_by);
-                        const replies = selectedMessages.filter((item) => item.parent_message_id === message.id);
+                        const replies = repliesByParent.get(message.id) || [];
                         return (
                           <article className="message-group" key={message.id}>
                             <div className="message-row">
