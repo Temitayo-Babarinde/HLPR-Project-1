@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '../../lib/supabase/server';
 import SignOutButton from '../../components/SignOutButton';
+import ClassList from '../../components/ClassList';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -47,19 +48,7 @@ export default async function DashboardPage() {
             <Link href="/join" className="dashboard-join">Find your first class</Link>
           </section>
         ) : (
-          <section aria-labelledby="course-list-heading">
-            <div className="dashboard-section-title"><div><p className="eyebrow">Current semester</p><h2 id="course-list-heading">Course spaces</h2></div><span>{classes.length} {classes.length === 1 ? 'class' : 'classes'}</span></div>
-            <div className="course-grid">
-            {classes.map((c) => (
-              <Link key={c.id} href={`/class/${c.id}`} className="course-card">
-                <div className="course-card-top"><span>{c.courses.department} {c.courses.number}</span><em>{c.semester}</em></div>
-                <h3>{c.courses.title}</h3>
-                <div className="course-card-meta"><span>Section {c.section_number}</span>{c.professor_name ? <span>{c.professor_name}</span> : null}</div>
-                <div className="course-card-open">Open class <span aria-hidden="true">→</span></div>
-              </Link>
-            ))}
-            </div>
-          </section>
+          <ClassList classes={classes} />
         )}
       </div>
     </main>
