@@ -336,8 +336,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .class-hero-inner { padding: 32px 0; }
   .class-topbar { padding: 0 16px; }
   .class-layout { padding-top: 16px; gap: 14px; }
-  .class-tabs { margin: 0 -12px; padding: 0 12px 3px; }
-  .class-tabs button { padding: 9px 10px; }
+  .class-tabs { margin: 0 -12px; padding: 8px 12px; position: sticky; top: 0; z-index: 20; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: none; border-bottom: 1px solid rgba(63,1,87,.1); background: rgba(245,242,246,.94); box-shadow: 0 8px 18px rgba(49,0,67,.07); backdrop-filter: blur(12px); }
+  .class-tabs::-webkit-scrollbar { display: none; }
+  .class-tabs button { min-height: 40px; padding: 9px 12px; flex: 0 0 auto; scroll-snap-align: start; }
+  .class-tabs button.active { box-shadow: inset 0 -2px var(--gold), 0 5px 14px rgba(49,0,67,.08); }
   .class-tabs button > span { display: none; }
   .discussion-grid { display: block; min-height: 0; }
   .thread-list { border-right: 0; border-bottom: 1px solid var(--line); max-height: 265px; overflow-y: auto; }
