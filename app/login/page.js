@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [resending, setResending] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const signupPasswordReady = password.length >= 8;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -142,7 +143,8 @@ export default function LoginPage() {
             placeholder="Password"
             autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
             required
-            minLength={6}
+            minLength={mode === 'signup' ? 8 : 6}
+            aria-describedby={mode === 'signup' ? 'signup-password-help' : undefined}
             style={{ ...inputStyle, marginBottom: 0 }}
           />
           <button
@@ -155,6 +157,18 @@ export default function LoginPage() {
             {showPassword ? 'Hide' : 'Show'}
           </button>
         </div>}
+
+        {mode === 'signup' && (
+          <p
+            id="signup-password-help"
+            className={`password-requirement${signupPasswordReady ? ' ready' : ''}`}
+          >
+            <span>Use at least 8 characters</span>
+            <span aria-live="polite">
+              {signupPasswordReady ? 'Ready' : `${8 - password.length} more`}
+            </span>
+          </p>
+        )}
 
         {mode === 'signin' && (
           <button
@@ -181,7 +195,11 @@ export default function LoginPage() {
           </button>
         )}
 
-        <button type="submit" disabled={loading} style={buttonStyle}>
+        <button
+          type="submit"
+          disabled={loading || (mode === 'signup' && !signupPasswordReady)}
+          style={buttonStyle}
+        >
           {loading ? 'Please wait…' : mode === 'signup' ? 'Create account' : mode === 'reset' ? 'Send reset link' : 'Sign in'}
         </button>
 
