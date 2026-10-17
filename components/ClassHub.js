@@ -110,6 +110,20 @@ export default function ClassHub({ section }) {
     window.history.replaceState(null, '', `#${nextTab}`);
   }
 
+  function handleTabKeyDown(event, currentIndex) {
+    let nextIndex;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') nextIndex = (currentIndex + 1) % TABS.length;
+    else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') nextIndex = (currentIndex - 1 + TABS.length) % TABS.length;
+    else if (event.key === 'Home') nextIndex = 0;
+    else if (event.key === 'End') nextIndex = TABS.length - 1;
+    else return;
+
+    event.preventDefault();
+    const nextTab = TABS[nextIndex].key;
+    selectTab(nextTab);
+    document.getElementById(`class-tab-${nextTab}`)?.focus();
+  }
+
   function openConversation(threadId) {
     setSelectedThreadId(threadId);
     if (window.matchMedia('(max-width: 680px)').matches) {
@@ -353,16 +367,32 @@ export default function ClassHub({ section }) {
       </section>
 
       <div className="class-layout">
-        <nav className="class-tabs" aria-label="Class areas">
-          {TABS.map((item) => (
-            <button key={item.key} type="button" className={tab === item.key ? 'active' : ''} aria-pressed={tab === item.key} onClick={() => selectTab(item.key)}>
+        <nav className="class-tabs" aria-label="Class areas" role="tablist">
+          {TABS.map((item, index) => (
+            <button
+              key={item.key}
+              id={`class-tab-${item.key}`}
+              type="button"
+              role="tab"
+              className={tab === item.key ? 'active' : ''}
+              aria-selected={tab === item.key}
+              aria-controls="class-tab-panel"
+              tabIndex={tab === item.key ? 0 : -1}
+              onClick={() => selectTab(item.key)}
+              onKeyDown={(event) => handleTabKeyDown(event, index)}
+            >
               <span>{item.icon}</span>{item.label}
               {item.key === 'discussion' && threads.length > 0 ? <em>{threads.length}</em> : null}
             </button>
           ))}
         </nav>
 
-        <section className="class-content">
+        <section
+          id="class-tab-panel"
+          className="class-content"
+          role="tabpanel"
+          aria-labelledby={`class-tab-${tab}`}
+        >
           {error ? (
             <div className="error banner" role="alert">
               <span>{error}</span>

@@ -202,6 +202,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .class-tabs button > span { width: 22px; color: #95899b; font-size: 17px; text-align: center; }
 .class-tabs button em { margin-left: auto; padding: 2px 7px; border-radius: 99px; background: #e9e2ec; font-size: 10px; font-style: normal; }
 .class-tabs button:hover { background: rgba(255,255,255,.7); color: var(--purple); }
+.class-tabs button:focus-visible { outline: 3px solid rgba(252,184,39,.72); outline-offset: 2px; }
 .class-tabs button.active { background: white; color: var(--purple); box-shadow: 0 8px 24px rgba(49,0,67,.07); }
 .class-content { min-width: 0; }
 .banner { margin: 0 0 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
