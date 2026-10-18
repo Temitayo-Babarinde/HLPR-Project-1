@@ -517,10 +517,27 @@ export default function ClassHub({ section }) {
                   <span style={{ width: `${taskStats.total ? (taskStats.completed / taskStats.total) * 100 : 0}%` }} />
                 </div>
               </div>
-              <form className="task-entry" onSubmit={addTask}>
+              <form className="task-entry" onSubmit={addTask} aria-busy={addingTask}>
                 <label className="sr-only" htmlFor="new-class-task">New class task</label>
-                <input id="new-class-task" value={newTask} onChange={(event) => setNewTask(event.target.value)} placeholder="Add an assignment or reminder…" disabled={addingTask} required />
-                <button type="submit" disabled={addingTask}>{addingTask ? 'Adding…' : 'Add'}</button>
+                <div className="task-input-wrap">
+                  <input
+                    id="new-class-task"
+                    value={newTask}
+                    onChange={(event) => setNewTask(event.target.value)}
+                    placeholder="Add an assignment or reminder…"
+                    maxLength={180}
+                    aria-describedby="new-class-task-count"
+                    disabled={addingTask}
+                    required
+                  />
+                  <span
+                    id="new-class-task-count"
+                    className={`task-count${newTask.length >= 160 ? ' near-limit' : ''}`}
+                  >
+                    {newTask.length} / 180
+                  </span>
+                </div>
+                <button type="submit" disabled={addingTask || !newTask.trim()}>{addingTask ? 'Adding…' : 'Add'}</button>
               </form>
               <div className="task-filters" aria-label="Filter class tasks">
                 {[['open', `Open ${taskStats.open}`], ['done', `Done ${taskStats.completed}`], ['all', `All ${taskStats.total}`]].map(([key, label]) => <button key={key} className={taskFilter === key ? 'active' : ''} aria-pressed={taskFilter === key} onClick={() => setTaskFilter(key)}>{label}</button>)}
