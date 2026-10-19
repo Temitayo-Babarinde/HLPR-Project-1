@@ -25,6 +25,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .not-found-shell::before { content: ''; width: 260px; height: 260px; position: absolute; left: -110px; bottom: -125px; border: 48px solid rgba(63,1,87,.06); border-radius: 50%; }
 .not-found-card { width: min(100%, 540px); padding: 46px 34px; position: relative; z-index: 1; border: 1px solid #e5dce8; border-radius: 24px; background: rgba(255,255,255,.9); text-align: center; box-shadow: 0 24px 65px rgba(49,0,67,.1); }
 .not-found-mark { width: 82px; height: 58px; margin: 0 auto 22px; display: grid; place-items: center; border-radius: 18px; background: linear-gradient(135deg, var(--purple), #68205c); color: var(--gold); font-size: 20px; font-weight: 950; letter-spacing: .08em; box-shadow: 0 12px 28px rgba(63,1,87,.2); }
+.class-error-mark { width: 58px; border-radius: 50%; font-size: 27px; }
 .not-found-card .eyebrow { margin: 0; }
 .not-found-card h1 { margin: 8px 0 10px; color: #2d2530; font-size: clamp(28px, 6vw, 40px); line-height: 1.08; letter-spacing: -.05em; }
 .not-found-card > p:not(.eyebrow) { max-width: 390px; margin: 0 auto; color: var(--muted); font-size: 13px; line-height: 1.65; }
