@@ -404,11 +404,27 @@ export default function ClassHub({ section }) {
             <div className="discussion-grid">
               <aside className="thread-list">
                 <div className="section-heading"><div><span>Class forum</span><h2>Discussion</h2></div><button onClick={() => openConversation(null)}>+ New</button></div>
-                <label className="thread-search">
-                  <span className="sr-only">Search discussions</span>
-                  <span aria-hidden="true">⌕</span>
-                  <input value={threadQuery} onChange={(event) => setThreadQuery(event.target.value)} placeholder="Search discussions" type="search" />
-                </label>
+                <div className="thread-search-row">
+                  <label className="thread-search">
+                    <span className="sr-only">Search discussions</span>
+                    <span aria-hidden="true">⌕</span>
+                    <input
+                      value={threadQuery}
+                      onChange={(event) => setThreadQuery(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Escape') setThreadQuery('');
+                      }}
+                      placeholder="Search discussions"
+                      type="search"
+                    />
+                  </label>
+                  {threadQuery ? <button type="button" onClick={() => setThreadQuery('')}>Clear</button> : null}
+                </div>
+                {threadQuery.trim() ? (
+                  <p className="thread-search-results" aria-live="polite">
+                    {filteredThreads.length} {filteredThreads.length === 1 ? 'discussion' : 'discussions'} found
+                  </p>
+                ) : null}
                 {filteredThreads.map((thread) => {
                   const count = messagesByThread.get(thread.id)?.length || 0;
                   return (
