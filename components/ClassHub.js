@@ -59,6 +59,7 @@ export default function ClassHub({ section }) {
   const [copyState, setCopyState] = useState('idle');
   const [userId, setUserId] = useState(null);
   const loadedSyllabus = useRef(false);
+  const syllabusRevision = useRef(0);
   const loadedThreadDraft = useRef(false);
   const conversationRef = useRef(null);
   const threadDraftKey = `hlpr-thread-draft-${section.id}`;
@@ -184,14 +185,26 @@ export default function ClassHub({ section }) {
   useEffect(() => {
     if (!loadedSyllabus.current || !userId) return;
     setSaveState('saving');
+    const revisionAtSave = syllabusRevision.current;
     const timer = setTimeout(async () => {
       const { error: saveError } = await supabase.from('syllabi').upsert({
         section_id: section.id, content: syllabus, updated_by: userId, updated_at: new Date().toISOString(),
       });
-      setSaveState(saveError ? 'error' : 'saved');
+      if (saveError) setSaveState('error');
+      else if (revisionAtSave === syllabusRevision.current) setSaveState('saved');
     }, 650);
     return () => clearTimeout(timer);
   }, [section.id, syllabus, supabase, userId, saveAttempt]);
+
+  useEffect(() => {
+    if (syllabusRevision.current === 0 || saveState === 'saved') return;
+    const warnBeforeLeaving = (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warnBeforeLeaving);
+    return () => window.removeEventListener('beforeunload', warnBeforeLeaving);
+  }, [saveState]);
 
   const people = useMemo(() => new Map(roster.map((person) => [person.id, person])), [roster]);
   const selectedThread = threads.find((thread) => thread.id === selectedThreadId);
@@ -269,6 +282,14 @@ export default function ClassHub({ section }) {
     link.download = `${courseName}.txt`;
     link.click();
     URL.revokeObjectURL(url);
+  }
+
+  function confirmSyllabusExit(event) {
+    if (syllabusRevision.current === 0 || saveState === 'saved') return;
+    const message = saveState === 'error'
+      ? 'Your latest syllabus changes could not be saved. Leave this class anyway?'
+      : 'Your latest syllabus changes are still saving. Leave this class anyway?';
+    if (!window.confirm(message)) event.preventDefault();
   }
 
   async function createThread(event) {
@@ -350,8 +371,8 @@ export default function ClassHub({ section }) {
   return (
     <main className="class-app">
       <header className="class-topbar">
-        <Link href="/dashboard" className="topbar-brand">hlpr<span>.</span></Link>
-        <Link href="/dashboard" className="back-link">← All classes</Link>
+        <Link href="/dashboard" className="topbar-brand" onClick={confirmSyllabusExit}>hlpr<span>.</span></Link>
+        <Link href="/dashboard" className="back-link" onClick={confirmSyllabusExit}>← All classes</Link>
       </header>
 
       <section className="class-hero">
@@ -594,7 +615,7 @@ export default function ClassHub({ section }) {
                   <button type="button" onClick={copySyllabus} disabled={!syllabus} aria-live="polite">{copyState === 'copied' ? '✓ Copied' : copyState === 'error' ? 'Copy failed' : 'Copy syllabus'}</button>
                 </div>
               </div>
-              <textarea className="syllabus-editor" value={syllabus} onChange={(event) => { setSyllabus(event.target.value); setCopyState('idle'); }} rows={18} placeholder="Add grading details, weekly topics, office hours, and important dates…" aria-label="Shared syllabus content" />
+              <textarea className="syllabus-editor" value={syllabus} onChange={(event) => { syllabusRevision.current += 1; setSyllabus(event.target.value); setCopyState('idle'); }} rows={18} placeholder="Add grading details, weekly topics, office hours, and important dates…" aria-label="Shared syllabus content" />
             </div>
           ) : null}
 
