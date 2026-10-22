@@ -2,6 +2,8 @@
 
 HLPR is a private class workspace for Hunter College students. Students can find their course section, talk with classmates, maintain shared tasks, and collaborate on a living syllabus from one responsive dashboard.
 
+Live app: [hlpr-hunter.vercel.app](https://hlpr-hunter.vercel.app)
+
 ## Stack
 
 - Next.js 16 App Router
@@ -29,14 +31,14 @@ HLPR is a private class workspace for Hunter College students. Students can find
 
 ## Included features
 
-- Hunter and CUNY Login email/password registration, confirmation, sign-in, resend, and reliable sign-out
-- Find-or-create class joining with a live section preview
-- Responsive class dashboard with section, semester, and professor details
-- Realtime class discussions with nested replies, search, and drafting counters
-- Shared tasks with Open, Done, and All filters plus completion progress
-- Shared syllabus with autosave status, word count, and one-click copy
-- Private searchable class roster visible only to enrolled students
-- Keyboard skip navigation, visible focus states, responsive layouts, and branded page recovery
+- Hunter and CUNY Login registration, email confirmation, password recovery, resend, sign-in, and reliable sign-out
+- Find-or-create class joining with a live section preview and retry-safe form state
+- Searchable class dashboard with section, semester, professor, loading, and recovery states
+- Realtime discussions with nested replies, message search, character guidance, and session draft recovery
+- Shared tasks with progress, Open/Done/All filters, safe update feedback, and keyboard-friendly entry
+- Shared syllabus with autosave recovery, unsaved-change protection, word count, copy, and text download
+- Private searchable class roster with direct email actions, visible only to enrolled students
+- Persistent class-area links, keyboard tab navigation, reduced-motion support, responsive layouts, and branded error pages
 
 ## Deploying to Vercel
 
