@@ -7,6 +7,21 @@ import { createClient } from '../../lib/supabase/client';
 
 const DEPARTMENTS = ['AFPRL', 'ANTHC', 'BIOL', 'CHEM', 'CSCI', 'ECON', 'ENGL', 'HIST', 'MATH', 'MEDIA', 'PHIL', 'PHYS', 'POLSC', 'PSYCH', 'SOC'];
 
+function collapseWhitespace(value) {
+  return value.trim().replace(/\s+/g, ' ');
+}
+
+function normalizeIdentifier(value) {
+  return collapseWhitespace(value).toUpperCase();
+}
+
+function normalizeSemester(value) {
+  return collapseWhitespace(value).replace(
+    /^(spring|summer|fall|winter)\s+(\d{4})$/i,
+    (_, term, year) => `${term[0].toUpperCase()}${term.slice(1).toLowerCase()} ${year}`,
+  );
+}
+
 export default function JoinPage() {
   const supabase = createClient();
   const router = useRouter();
@@ -18,8 +33,10 @@ export default function JoinPage() {
   const [professor, setProfessor] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const courseNumber = number.trim() || '—';
-  const courseTitle = title.trim() || 'Course title will be added automatically';
+  const courseNumber = normalizeIdentifier(number) || '—';
+  const courseTitle = collapseWhitespace(title) || 'Course title will be added automatically';
+  const sectionNumber = normalizeIdentifier(section);
+  const semesterName = normalizeSemester(semester);
 
   async function handleJoin(e) {
     e.preventDefault();
@@ -27,14 +44,28 @@ export default function JoinPage() {
     setError('');
     setLoading(true);
 
+    const normalizedNumber = normalizeIdentifier(number);
+    const normalizedSection = normalizeIdentifier(section);
+    const normalizedSemester = normalizeSemester(semester);
+    const normalizedTitle = collapseWhitespace(title);
+    const normalizedProfessor = collapseWhitespace(professor);
+    setNumber(normalizedNumber);
+    setSection(normalizedSection);
+    setSemester(normalizedSemester);
+    if (!normalizedNumber || !normalizedSection || !normalizedSemester) {
+      setError('Enter a course number, section, and semester before joining.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data: sectionId, error: joinError } = await supabase.rpc('join_or_create_section', {
         p_department: department,
-        p_number: number.trim(),
-        p_title: title.trim() || `${department} ${number.trim()}`,
-        p_section_number: section.trim(),
-        p_semester: semester.trim(),
-        p_professor_name: professor.trim() || null,
+        p_number: normalizedNumber,
+        p_title: normalizedTitle || `${department} ${normalizedNumber}`,
+        p_section_number: normalizedSection,
+        p_semester: normalizedSemester,
+        p_professor_name: normalizedProfessor || null,
       });
       if (joinError || !sectionId) throw joinError || new Error('Missing section');
       router.push(`/class/${sectionId}`);
@@ -61,7 +92,7 @@ export default function JoinPage() {
           <div className="join-preview" aria-live="polite">
             <span>{department} {courseNumber}</span>
             <strong>{courseTitle}</strong>
-            <small>{section.trim() || 'Section —'} · {semester.trim() || 'Semester —'}</small>
+            <small>{sectionNumber || 'Section —'} · {semesterName || 'Semester —'}</small>
           </div>
 
           <div className="join-grid">
@@ -75,17 +106,18 @@ export default function JoinPage() {
             </label>
             <label>
               <span>Course number</span>
-              <input value={number} onChange={(e) => setNumber(e.target.value)} placeholder="12700" inputMode="numeric" autoComplete="off" disabled={loading} required />
+              <input value={number} onChange={(e) => setNumber(e.target.value)} onBlur={() => setNumber(normalizeIdentifier(number))} placeholder="12700" inputMode="numeric" autoComplete="off" disabled={loading} required />
             </label>
             <label>
               <span>Section</span>
-              <input value={section} onChange={(e) => setSection(e.target.value)} placeholder="01" autoComplete="off" disabled={loading} required />
+              <input value={section} onChange={(e) => setSection(e.target.value)} onBlur={() => setSection(normalizeIdentifier(section))} placeholder="01" autoComplete="off" disabled={loading} required />
             </label>
             <label>
               <span>Semester</span>
-              <input value={semester} onChange={(e) => setSemester(e.target.value)} placeholder="Fall 2026" autoComplete="off" disabled={loading} required />
+              <input value={semester} onChange={(e) => setSemester(e.target.value)} onBlur={() => setSemester(normalizeSemester(semester))} placeholder="Fall 2026" autoComplete="off" disabled={loading} required />
             </label>
           </div>
+          <p className="join-format-note"><span aria-hidden="true">✦</span> Course, section, and semester formatting is standardized so classmates reach the same space.</p>
           <label className="join-field">
             <span>Course title <small>optional</small></span>
             <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Software Analysis & Design" autoComplete="off" disabled={loading} />

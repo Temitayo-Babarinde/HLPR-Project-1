@@ -159,6 +159,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .join-field span small { color: #a399a6; font-size: 9px; font-weight: 650; }
 .join-grid input, .join-grid select, .join-field input { width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid #ddd4e0; border-radius: 10px; outline: 0; background: #fdfcfd; color: #332b36; font-size: 13px; box-sizing: border-box; }
 .join-grid input:focus, .join-grid select:focus, .join-field input:focus { border-color: #b999c2; box-shadow: 0 0 0 3px rgba(63,1,87,.07); }
+.join-format-note { margin: -2px 1px 14px; display: flex; gap: 7px; align-items: flex-start; color: #766b79; font-size: 10px; line-height: 1.45; }
+.join-format-note span { color: #a97400; font-size: 12px; line-height: 1.2; }
 .join-submit { width: 100%; min-height: 44px; margin-top: 4px; border: 0; border-radius: 10px; background: var(--purple); color: white; font-size: 13px; font-weight: 850; cursor: pointer; }
 .join-submit:hover:not(:disabled) { background: #53036b; }
 .join-submit:disabled { cursor: wait; opacity: .68; }
