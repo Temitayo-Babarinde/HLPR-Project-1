@@ -1,22 +1,44 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
 
-export default function LoginPage() {
+function authErrorMessage(authError, action = 'signin') {
+  const messages = {
+    email_not_confirmed: 'Confirm your email before signing in. You can resend the confirmation below.',
+    invalid_credentials: 'That email and password combination was not recognized. Check both fields or reset your password.',
+    over_email_send_rate_limit: 'Too many emails were requested. Wait a few minutes, then try again.',
+    signup_disabled: 'New account creation is temporarily unavailable. Please try again later.',
+    user_already_exists: 'An account already exists for this email. Sign in or reset your password instead.',
+    weak_password: 'Choose a stronger password with at least eight characters.',
+  };
+
+  if (messages[authError?.code]) return messages[authError.code];
+  if (action === 'reset') return 'We could not send the reset link. Check your connection and try again.';
+  if (action === 'signup') return 'We could not create your account. Check your connection and try again.';
+  return 'We could not sign you in. Check your connection and try again.';
+}
+
+function LoginForm() {
+  const searchParams = useSearchParams();
   const [mode, setMode] = useState('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(() => searchParams.get('confirmation') === 'failed'
+    ? 'That confirmation link is invalid or has expired. Enter your email below to request a new one.'
+    : '');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
   const router = useRouter();
   const supabase = createClient();
   const signupPasswordReady = password.length >= 8;
+  const canResendConfirmation = mode === 'signin' && email && (
+    message || error.startsWith('Confirm your email') || error.startsWith('That confirmation link')
+  );
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -37,7 +59,7 @@ export default function LoginPage() {
         redirectTo: `${window.location.origin}/auth/confirm?next=/reset-password`,
       });
       if (resetError) {
-        setError(resetError.message);
+        setError(authErrorMessage(resetError, 'reset'));
         setLoading(false);
         return;
       }
@@ -56,7 +78,7 @@ export default function LoginPage() {
         },
       });
       if (error) {
-        setError(error.message);
+        setError(authErrorMessage(error, 'signup'));
         setLoading(false);
         return;
       }
@@ -67,7 +89,7 @@ export default function LoginPage() {
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
       if (error) {
-        setError(error.message);
+        setError(authErrorMessage(error));
         setLoading(false);
         return;
       }
@@ -86,7 +108,7 @@ export default function LoginPage() {
       options: { emailRedirectTo: `${window.location.origin}/auth/confirm` },
     });
     setResending(false);
-    if (resendError) setError(resendError.message);
+    if (resendError) setError(authErrorMessage(resendError));
     else setMessage('Confirmation email resent. Check your inbox and spam folder.');
   }
 
@@ -189,7 +211,7 @@ export default function LoginPage() {
 
         {error && <p className="error" role="alert">{error}</p>}
         {message && <p className="success" role="status">{message}</p>}
-        {message && mode === 'signin' && email && (
+        {canResendConfirmation && (
           <button type="button" onClick={resendConfirmation} disabled={resending} style={{ ...buttonStyle, background: '#fff', color: '#3F0157', border: '1px solid #e5e7eb', marginBottom: 10 }}>
             {resending ? 'Sending…' : 'Resend confirmation email'}
           </button>
@@ -228,6 +250,14 @@ export default function LoginPage() {
         )}
       </form>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<main className="shell auth-shell" aria-busy="true" />}>
+      <LoginForm />
+    </Suspense>
   );
 }
 
