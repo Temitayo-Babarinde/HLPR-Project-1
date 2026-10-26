@@ -62,6 +62,7 @@ export default function ClassHub({ section }) {
   const syllabusRevision = useRef(0);
   const loadedThreadDraft = useRef(false);
   const conversationRef = useRef(null);
+  const replyInputRef = useRef(null);
   const threadDraftKey = `hlpr-thread-draft-${section.id}`;
 
   useEffect(() => {
@@ -133,6 +134,19 @@ export default function ClassHub({ section }) {
         block: 'start',
       });
     }
+  }
+
+  function startReply(messageId) {
+    setReplyTo(messageId);
+    window.requestAnimationFrame(() => {
+      const input = replyInputRef.current;
+      if (!input) return;
+      input.focus({ preventScroll: true });
+      input.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'center',
+      });
+    });
   }
 
   const loadDiscussion = useCallback(async () => {
@@ -507,7 +521,7 @@ export default function ClassHub({ section }) {
                                   </time>
                                 </div>
                                 <p>{message.body}</p>
-                                <button onClick={() => setReplyTo(message.id)}>Reply</button>
+                                <button onClick={() => startReply(message.id)} aria-label={`Reply to ${author?.full_name || author?.email || 'classmate'}`}>Reply</button>
                               </div>
                             </div>
                             {replies.map((reply) => {
@@ -533,7 +547,19 @@ export default function ClassHub({ section }) {
                     </div>
                     <form className="reply-box" onSubmit={postReply}>
                       {replyTarget ? <div className="replying"><div><span>Replying to <strong>{replyTargetAuthor?.full_name || replyTargetAuthor?.email || 'Classmate'}</strong></span><small>“{replyTarget.body.length > 90 ? `${replyTarget.body.slice(0, 90)}…` : replyTarget.body}”</small></div><button type="button" onClick={() => setReplyTo(null)}>Cancel</button></div> : null}
-                      <textarea value={replyBody} onChange={(event) => setReplyBody(event.target.value)} placeholder="Write a reply…" rows={3} maxLength={4000} aria-describedby="reply-count" required />
+                      <textarea
+                        ref={replyInputRef}
+                        value={replyBody}
+                        onChange={(event) => setReplyBody(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Escape' && replyTo) setReplyTo(null);
+                        }}
+                        placeholder="Write a reply…"
+                        rows={3}
+                        maxLength={4000}
+                        aria-describedby="reply-count"
+                        required
+                      />
                       <div className="reply-actions">
                         <span id="reply-count" className="composer-count">{replyBody.length.toLocaleString()} / 4,000</span>
                         <button className="button" disabled={posting}>{posting ? 'Sending…' : 'Send reply'}</button>
