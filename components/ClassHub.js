@@ -269,10 +269,15 @@ export default function ClassHub({ section }) {
   }, [taskFilter, tasks]);
   const filteredRoster = useMemo(() => {
     const query = rosterQuery.trim().toLowerCase();
-    if (!query) return roster;
-    return roster.filter((person) =>
-      [person.full_name, person.email].some((value) => value?.toLowerCase().includes(query)),
-    );
+    return roster
+      .filter((person) => !query ||
+        [person.full_name, person.email].some((value) => value?.toLowerCase().includes(query)))
+      .sort((first, second) => {
+        if (first.isMe !== second.isMe) return first.isMe ? -1 : 1;
+        const firstLabel = first.full_name || first.email || '';
+        const secondLabel = second.full_name || second.email || '';
+        return firstLabel.localeCompare(secondLabel, undefined, { sensitivity: 'base' });
+      });
   }, [roster, rosterQuery]);
   const syllabusWords = syllabus.trim() ? syllabus.trim().split(/\s+/).length : 0;
 
@@ -651,8 +656,18 @@ export default function ClassHub({ section }) {
               <div className="roster-toolbar">
                 <label className="roster-search">
                   <span aria-hidden="true">⌕</span>
-                  <input type="search" value={rosterQuery} onChange={(event) => setRosterQuery(event.target.value)} placeholder="Search by name or email" aria-label="Search classmates by name or email" />
+                  <input
+                    type="search"
+                    value={rosterQuery}
+                    onChange={(event) => setRosterQuery(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Escape') setRosterQuery('');
+                    }}
+                    placeholder="Search by name or email"
+                    aria-label="Search classmates by name or email"
+                  />
                 </label>
+                {rosterQuery ? <button className="roster-clear" type="button" onClick={() => setRosterQuery('')}>Clear</button> : null}
                 {rosterQuery.trim() ? <span aria-live="polite">{filteredRoster.length} found</span> : null}
               </div>
               <div className="roster-grid">

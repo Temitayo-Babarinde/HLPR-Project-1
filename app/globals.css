@@ -330,6 +330,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .roster-search > span { font-size: 18px; line-height: 1; }
 .roster-search input { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; color: #332b36; font-size: 12px; }
 .roster-search input::placeholder { color: #a49ba7; }
+.roster-clear { min-height: 38px; padding: 7px 10px; border: 1px solid #dfd2e3; border-radius: 9px; background: white; color: var(--purple); font-size: 9px; font-weight: 850; cursor: pointer; }
+.roster-clear:hover { border-color: #b998c2; background: #f7f0f8; }
+.roster-clear:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .roster-toolbar > span { flex: 0 0 auto; color: #785083; font-size: 10px; font-weight: 850; }
 .roster-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .person-card { min-width: 0; display: flex; align-items: center; gap: 12px; padding: 13px; border: 1px solid #eee9ef; border-radius: 12px; background: #fcfbfc; }
