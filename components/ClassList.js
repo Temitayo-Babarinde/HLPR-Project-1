@@ -1,10 +1,36 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 
 export default function ClassList({ classes }) {
   const [query, setQuery] = useState('');
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    function focusSearch(event) {
+      const target = event.target;
+      const isTyping = target instanceof HTMLInputElement
+        || target instanceof HTMLTextAreaElement
+        || target instanceof HTMLSelectElement
+        || target?.isContentEditable;
+
+      if (event.key === '/' && !isTyping && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        event.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    }
+
+    window.addEventListener('keydown', focusSearch);
+    return () => window.removeEventListener('keydown', focusSearch);
+  }, []);
+
+  function handleSearchKeyDown(event) {
+    if (event.key === 'Escape' && query) {
+      event.preventDefault();
+      setQuery('');
+    }
+  }
   const filteredClasses = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) return classes;
@@ -28,7 +54,8 @@ export default function ClassList({ classes }) {
         <label className="class-search">
           <span aria-hidden="true">⌕</span>
           <span className="sr-only">Search your classes</span>
-          <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search classes, professors, or semesters" />
+          <input ref={searchInputRef} type="search" value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={handleSearchKeyDown} placeholder="Search classes, professors, or semesters" />
+          <kbd aria-hidden="true">/</kbd>
         </label>
         {query ? <button type="button" onClick={() => setQuery('')}>Clear</button> : null}
       </div>
