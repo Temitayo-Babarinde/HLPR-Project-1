@@ -490,11 +490,13 @@ export default function ClassHub({ section }) {
                     <span className="eyebrow">Start a conversation</span>
                     <h2>What should the class discuss?</h2>
                     <div className="composer-field">
-                      <input className="input" value={newThreadTitle} onChange={(event) => setNewThreadTitle(event.target.value)} placeholder="Topic title" maxLength={160} aria-describedby="topic-title-count" required />
+                      <label className="composer-label" htmlFor="topic-title">Topic title</label>
+                      <input id="topic-title" className="input" value={newThreadTitle} onChange={(event) => setNewThreadTitle(event.target.value)} placeholder="Add a clear, specific title" maxLength={160} aria-describedby="topic-title-count" required />
                       <span id="topic-title-count" className="composer-count">{newThreadTitle.length} / 160</span>
                     </div>
                     <div className="composer-field">
-                      <textarea className="input" value={newThreadBody} onChange={(event) => setNewThreadBody(event.target.value)} placeholder="Ask a question, share a resource, or start a study thread…" rows={6} maxLength={4000} aria-describedby="topic-body-count" required />
+                      <label className="composer-label" htmlFor="topic-message">Opening message</label>
+                      <textarea id="topic-message" className="input" value={newThreadBody} onChange={(event) => setNewThreadBody(event.target.value)} placeholder="Ask a question, share a resource, or start a study thread…" rows={6} maxLength={4000} aria-describedby="topic-body-count" required />
                       <span id="topic-body-count" className="composer-count">{newThreadBody.length.toLocaleString()} / 4,000</span>
                     </div>
                     {newThreadTitle.trim() || newThreadBody.trim() ? <p className="draft-note" role="status"><span aria-hidden="true">✓</span> Draft saved for this tab</p> : null}
@@ -552,7 +554,9 @@ export default function ClassHub({ section }) {
                     </div>
                     <form className="reply-box" onSubmit={postReply}>
                       {replyTarget ? <div className="replying"><div><span>Replying to <strong>{replyTargetAuthor?.full_name || replyTargetAuthor?.email || 'Classmate'}</strong></span><small>“{replyTarget.body.length > 90 ? `${replyTarget.body.slice(0, 90)}…` : replyTarget.body}”</small></div><button type="button" onClick={() => setReplyTo(null)}>Cancel</button></div> : null}
+                      <label className="composer-label" htmlFor="discussion-reply">Your reply</label>
                       <textarea
+                        id="discussion-reply"
                         ref={replyInputRef}
                         value={replyBody}
                         onChange={(event) => setReplyBody(event.target.value)}

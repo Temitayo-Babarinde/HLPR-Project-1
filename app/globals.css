@@ -249,6 +249,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .new-thread h2 { margin: 0 0 12px; font-size: 27px; }
 .new-thread textarea { resize: vertical; line-height: 1.6; }
 .composer-field { display: grid; gap: 5px; }
+.composer-label { color: #5d4c63; font-size: 10px; font-weight: 850; letter-spacing: .025em; }
 .composer-count { color: #968b99; font-size: 9px; font-weight: 750; letter-spacing: .02em; }
 .composer-field .composer-count { justify-self: end; margin-right: 3px; }
 .draft-note { margin: -2px 0 1px; display: flex; align-items: center; gap: 5px; color: #6d5d72; font-size: 10px; font-weight: 750; }
@@ -272,6 +273,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .message-copy p { margin: 7px 0; color: #554d58; font-size: 13px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
 .message-copy button { padding: 0; border: 0; background: none; color: #7b4b88; font-size: 10px; font-weight: 800; cursor: pointer; }
 .reply-box { margin: 0 20px 20px; padding: 10px; border: 1px solid #dfd6e2; border-radius: 13px; background: #fbfafb; }
+.reply-box .composer-label { display: inline-block; margin: 2px 6px 4px; color: #765a7d; }
 .reply-box textarea { width: 100%; padding: 5px 6px; border: 0; outline: 0; resize: none; background: transparent; color: #342c37; font-size: 13px; line-height: 1.5; }
 .reply-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .reply-box .button { min-height: 34px; padding: 7px 13px; display: flex; font-size: 11px; }
