@@ -171,7 +171,7 @@ export default function ClassHub({ section }) {
         supabase.from('profiles').select('id, full_name, email').eq('id', user.id).single(),
         supabase.rpc('get_classmates', { p_section_id: section.id }),
         supabase.from('syllabi').select('content').eq('section_id', section.id).maybeSingle(),
-        supabase.from('tasks').select('*').eq('section_id', section.id).order('created_at'),
+        supabase.from('tasks').select('*').eq('section_id', section.id).order('created_at', { ascending: false }),
       ]);
       if (!active) return;
       const [{ data: me, error: meError }, { data: classmates, error: rosterError }, { data: syllabusRow, error: syllabusError }, { data: taskRows, error: tasksError }] = results;
@@ -363,7 +363,7 @@ export default function ClassHub({ section }) {
     }).select().single();
     if (taskError) setError('That task could not be added. Your draft is still here so you can try again.');
     else if (data) {
-      setTasks((previous) => [...previous, data]);
+      setTasks((previous) => [data, ...previous]);
       setNewTask('');
     }
     setAddingTask(false);
@@ -611,8 +611,11 @@ export default function ClassHub({ section }) {
                 </div>
                 <button type="submit" disabled={addingTask || !newTask.trim()}>{addingTask ? 'Adding…' : 'Add'}</button>
               </form>
-              <div className="task-filters" aria-label="Filter class tasks">
-                {[['open', `Open ${taskStats.open}`], ['done', `Done ${taskStats.completed}`], ['all', `All ${taskStats.total}`]].map(([key, label]) => <button key={key} className={taskFilter === key ? 'active' : ''} aria-pressed={taskFilter === key} onClick={() => setTaskFilter(key)}>{label}</button>)}
+              <div className="task-filter-row">
+                <div className="task-filters" aria-label="Filter class tasks">
+                  {[['open', `Open ${taskStats.open}`], ['done', `Done ${taskStats.completed}`], ['all', `All ${taskStats.total}`]].map(([key, label]) => <button key={key} className={taskFilter === key ? 'active' : ''} aria-pressed={taskFilter === key} onClick={() => setTaskFilter(key)}>{label}</button>)}
+                </div>
+                <span>Newest first</span>
               </div>
               <div className="task-list">
                 {visibleTasks.map((task) => {
