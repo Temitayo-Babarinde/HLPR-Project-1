@@ -152,9 +152,17 @@ function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="name@myhunter.cuny.edu or @login.cuny.edu"
           autoComplete="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          aria-describedby="login-email-help"
           required
           style={inputStyle}
         />
+        <p id="login-email-help" className="auth-email-help">
+          <span><strong>Hunter</strong> @myhunter.cuny.edu</span>
+          <span><strong>CUNY Login</strong> @login.cuny.edu</span>
+        </p>
         {mode !== 'reset' && <div className="password-field">
           <label className="sr-only" htmlFor="login-password">Password</label>
           <input
