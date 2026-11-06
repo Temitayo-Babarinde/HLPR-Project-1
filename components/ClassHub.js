@@ -385,7 +385,14 @@ export default function ClassHub({ section }) {
     }
   }
 
-  if (loading) return <main className="app-loading"><span className="loading-mark">h</span><p>Opening your class…</p></main>;
+  if (loading) {
+    return (
+      <main className="app-loading" role="status" aria-live="polite" aria-busy="true">
+        <span className="loading-mark" aria-hidden="true">h</span>
+        <p>Opening your class…</p>
+      </main>
+    );
+  }
 
   return (
     <main className="class-app">
