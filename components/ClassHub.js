@@ -316,41 +316,52 @@ export default function ClassHub({ section }) {
     if (!newThreadTitle.trim() || !newThreadBody.trim() || !userId) return;
     setPosting(true);
     setError('');
-    const { data: thread, error: threadError } = await supabase.from('discussion_threads').insert({
-      section_id: section.id, title: newThreadTitle.trim(), created_by: userId,
-    }).select().single();
-    if (!threadError && thread) {
-      const { error: messageError } = await supabase.from('discussion_messages').insert({
-        thread_id: thread.id, body: newThreadBody.trim(), created_by: userId,
-      });
-      if (!messageError) {
-        window.sessionStorage.removeItem(threadDraftKey);
-        setNewThreadTitle('');
-        setNewThreadBody('');
-        setSelectedThreadId(thread.id);
-        await loadDiscussion();
-      } else setError('The topic was created, but its first message failed to post.');
-    } else setError('Your discussion topic could not be created.');
-    setPosting(false);
+    try {
+      const { data: thread, error: threadError } = await supabase.from('discussion_threads').insert({
+        section_id: section.id, title: newThreadTitle.trim(), created_by: userId,
+      }).select().single();
+      if (!threadError && thread) {
+        const { error: messageError } = await supabase.from('discussion_messages').insert({
+          thread_id: thread.id, body: newThreadBody.trim(), created_by: userId,
+        });
+        if (!messageError) {
+          window.sessionStorage.removeItem(threadDraftKey);
+          setNewThreadTitle('');
+          setNewThreadBody('');
+          setSelectedThreadId(thread.id);
+          await loadDiscussion();
+        } else setError('The topic was created, but its first message failed to post.');
+      } else setError('Your discussion topic could not be created. Your draft is still here so you can try again.');
+    } catch {
+      setError('The connection was interrupted. Check the discussion before retrying—your draft is still here.');
+    } finally {
+      setPosting(false);
+    }
   }
 
   async function postReply(event) {
     event.preventDefault();
     if (!replyBody.trim() || !selectedThreadId || !userId) return;
     setPosting(true);
-    const { error: replyError } = await supabase.from('discussion_messages').insert({
-      thread_id: selectedThreadId,
-      parent_message_id: replyTo,
-      body: replyBody.trim(),
-      created_by: userId,
-    });
-    if (replyError) setError('Your reply could not be posted.');
-    else {
-      setReplyBody('');
-      setReplyTo(null);
-      await loadDiscussion();
+    setError('');
+    try {
+      const { error: replyError } = await supabase.from('discussion_messages').insert({
+        thread_id: selectedThreadId,
+        parent_message_id: replyTo,
+        body: replyBody.trim(),
+        created_by: userId,
+      });
+      if (replyError) setError('Your reply could not be posted. Your draft is still here so you can try again.');
+      else {
+        setReplyBody('');
+        setReplyTo(null);
+        await loadDiscussion();
+      }
+    } catch {
+      setError('The connection was interrupted. Your reply is still here so you can try again.');
+    } finally {
+      setPosting(false);
     }
-    setPosting(false);
   }
 
   async function addTask(event) {
