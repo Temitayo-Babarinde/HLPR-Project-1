@@ -3,6 +3,7 @@
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
+import { isSupportedCunyEmail, normalizeCunyEmail } from '../../lib/auth/cuny-email.mjs';
 
 function authErrorMessage(authError, action = 'signin') {
   const messages = {
@@ -46,9 +47,8 @@ function LoginForm() {
     setMessage('');
     setLoading(true);
 
-    const normalizedEmail = email.trim().toLowerCase();
-    const allowed = normalizedEmail.endsWith('@myhunter.cuny.edu') || normalizedEmail.endsWith('@login.cuny.edu');
-    if (!allowed) {
+    const normalizedEmail = normalizeCunyEmail(email);
+    if (!isSupportedCunyEmail(normalizedEmail)) {
       setError('Use your Hunter or CUNY Login email address.');
       setLoading(false);
       return;
