@@ -55,6 +55,7 @@ export default function ClassHub({ section }) {
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState('');
   const [saveState, setSaveState] = useState('saved');
+  const [savedAt, setSavedAt] = useState(null);
   const [saveAttempt, setSaveAttempt] = useState(0);
   const [copyState, setCopyState] = useState('idle');
   const [userId, setUserId] = useState(null);
@@ -205,7 +206,10 @@ export default function ClassHub({ section }) {
         section_id: section.id, content: syllabus, updated_by: userId, updated_at: new Date().toISOString(),
       });
       if (saveError) setSaveState('error');
-      else if (revisionAtSave === syllabusRevision.current) setSaveState('saved');
+      else if (revisionAtSave === syllabusRevision.current) {
+        setSaveState('saved');
+        setSavedAt(new Date());
+      }
     }, 650);
     return () => clearTimeout(timer);
   }, [section.id, syllabus, supabase, userId, saveAttempt]);
@@ -663,7 +667,7 @@ export default function ClassHub({ section }) {
 
           {tab === 'syllabus' ? (
             <div className="feature-card">
-              <div className="section-heading"><div><span>Living document</span><h2>Shared syllabus</h2></div><div className="save-actions"><b className={saveState === 'error' ? 'save-error' : ''} role="status">{saveState === 'saving' ? 'Saving…' : saveState === 'error' ? 'Save failed' : 'Saved'}</b>{saveState === 'error' ? <button type="button" onClick={() => setSaveAttempt((attempt) => attempt + 1)}>Retry save</button> : null}</div></div>
+              <div className="section-heading"><div><span>Living document</span><h2>Shared syllabus</h2></div><div className="save-actions"><b className={saveState === 'error' ? 'save-error' : ''} role="status">{saveState === 'saving' ? 'Saving…' : saveState === 'error' ? 'Save failed' : savedAt ? <>Saved at <time dateTime={savedAt.toISOString()} title={savedAt.toLocaleString()}>{savedAt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</time></> : 'Saved'}</b>{saveState === 'error' ? <button type="button" onClick={() => setSaveAttempt((attempt) => attempt + 1)}>Retry save</button> : null}</div></div>
               <div className="syllabus-toolbar">
                 <div><strong>{syllabusWords} {syllabusWords === 1 ? 'word' : 'words'}</strong><span>{syllabus.length.toLocaleString()} characters · Autosaves as you type</span></div>
                 <div className="syllabus-actions">
