@@ -377,6 +377,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .conversation-panel { min-height: 500px; }
   .message-stream { max-height: none; }
   .new-thread { padding: 28px 20px; }
+  .task-entry { align-items: stretch; flex-direction: column; }
+  .task-input-wrap { min-height: 38px; }
+  .task-entry button { min-height: 40px; }
+  .task-filter-row { align-items: stretch; flex-direction: column-reverse; gap: 7px; }
+  .task-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .task-filters button { min-height: 38px; padding-inline: 7px; }
   .syllabus-toolbar { align-items: stretch; flex-direction: column; }
   .syllabus-actions { display: grid; grid-template-columns: 1fr 1fr; }
   .syllabus-toolbar button { width: 100%; min-height: 38px; }
