@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '../../lib/supabase/client';
+import { getCurrentSemester } from '../../lib/classes/current-semester.mjs';
 
 const DEPARTMENTS = ['AFPRL', 'ANTHC', 'BIOL', 'CHEM', 'CSCI', 'ECON', 'ENGL', 'HIST', 'MATH', 'MEDIA', 'PHIL', 'PHYS', 'POLSC', 'PSYCH', 'SOC'];
 
@@ -28,7 +29,7 @@ export default function JoinPage() {
   const [department, setDepartment] = useState(DEPARTMENTS[0]);
   const [number, setNumber] = useState('');
   const [section, setSection] = useState('01');
-  const [semester, setSemester] = useState('Fall 2026');
+  const [semester, setSemester] = useState(getCurrentSemester);
   const [title, setTitle] = useState('');
   const [professor, setProfessor] = useState('');
   const [error, setError] = useState('');
@@ -114,7 +115,7 @@ export default function JoinPage() {
             </label>
             <label>
               <span>Semester</span>
-              <input value={semester} onChange={(e) => setSemester(e.target.value)} onBlur={() => setSemester(normalizeSemester(semester))} placeholder="Fall 2026" autoComplete="off" disabled={loading} required />
+              <input value={semester} onChange={(e) => setSemester(e.target.value)} onBlur={() => setSemester(normalizeSemester(semester))} placeholder={getCurrentSemester()} autoComplete="off" disabled={loading} required />
             </label>
           </div>
           <p className="join-format-note"><span aria-hidden="true">✦</span> Course, section, and semester formatting is standardized so classmates reach the same space.</p>
