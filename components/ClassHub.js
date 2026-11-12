@@ -173,6 +173,7 @@ export default function ClassHub({ section }) {
         supabase.rpc('get_classmates', { p_section_id: section.id }),
         supabase.from('syllabi').select('content').eq('section_id', section.id).maybeSingle(),
         supabase.from('tasks').select('*').eq('section_id', section.id).order('created_at', { ascending: false }),
+        loadDiscussion(),
       ]);
       if (!active) return;
       const [{ data: me, error: meError }, { data: classmates, error: rosterError }, { data: syllabusRow, error: syllabusError }, { data: taskRows, error: tasksError }] = results;
@@ -181,7 +182,6 @@ export default function ClassHub({ section }) {
       setSyllabus(syllabusRow?.content || '');
       loadedSyllabus.current = true;
       setTasks(taskRows || []);
-      await loadDiscussion();
       if (active) setLoading(false);
     }
     load();
