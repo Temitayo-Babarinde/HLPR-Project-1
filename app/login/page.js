@@ -54,49 +54,54 @@ function LoginForm() {
       return;
     }
 
-    if (mode === 'reset') {
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-        redirectTo: `${window.location.origin}/auth/confirm?next=/reset-password`,
-      });
-      if (resetError) {
-        setError(authErrorMessage(resetError, 'reset'));
+    try {
+      if (mode === 'reset') {
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+          redirectTo: `${window.location.origin}/auth/confirm?next=/reset-password`,
+        });
+        if (resetError) {
+          setError(authErrorMessage(resetError, 'reset'));
+          setLoading(false);
+          return;
+        }
+        setMessage('If an account exists for that email, a password reset link is on the way.');
         setLoading(false);
         return;
       }
-      setMessage('If an account exists for that email, a password reset link is on the way.');
-      setLoading(false);
-      return;
-    }
 
-    if (mode === 'signup') {
-      const { error } = await supabase.auth.signUp({
-        email: normalizedEmail,
-        password,
-        options: {
-          data: { full_name: fullName },
-          emailRedirectTo: `${window.location.origin}/auth/confirm`,
-        },
-      });
-      if (error) {
-        setError(authErrorMessage(error, 'signup'));
+      if (mode === 'signup') {
+        const { error } = await supabase.auth.signUp({
+          email: normalizedEmail,
+          password,
+          options: {
+            data: { full_name: fullName },
+            emailRedirectTo: `${window.location.origin}/auth/confirm`,
+          },
+        });
+        if (error) {
+          setError(authErrorMessage(error, 'signup'));
+          setLoading(false);
+          return;
+        }
+        setMessage('Check your CUNY email inbox to confirm your account, then come back and sign in.');
+        setMode('signin');
         setLoading(false);
         return;
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
+        if (error) {
+          setError(authErrorMessage(error));
+          setLoading(false);
+          return;
+        }
       }
-      setMessage('Check your CUNY email inbox to confirm your account, then come back and sign in.');
-      setMode('signin');
-      setLoading(false);
-      return;
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
-      if (error) {
-        setError(authErrorMessage(error));
-        setLoading(false);
-        return;
-      }
-    }
 
-    router.push('/dashboard');
-    router.refresh();
+      router.push('/dashboard');
+      router.refresh();
+    } catch {
+      setError('The connection was interrupted. Your details are still here, so you can try again.');
+      setLoading(false);
+    }
   }
 
   async function resendConfirmation() {
