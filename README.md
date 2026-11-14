@@ -31,12 +31,12 @@ Live app: [hlpr-hunter.vercel.app](https://hlpr-hunter.vercel.app)
 
 ## Included features
 
-- Hunter and CUNY Login registration, mobile-safe email entry, email confirmation, password recovery, resend, sign-in, and reliable sign-out
-- Find-or-create class joining with a live section preview and retry-safe form state
+- Hunter and CUNY Login registration, mobile-safe email entry, email confirmation, password recovery, resend, sign-in, and recovery from interrupted auth requests
+- Find-or-create class joining with a current-term default, live section preview, and retry-safe form state
 - Searchable class dashboard with a `/` focus shortcut, section, semester, professor, loading, and recovery states
 - Realtime discussions with nested replies, message search, persistent field labels, character guidance, and session draft recovery
-- Shared tasks with newest-first ordering, progress, Open/Done/All filters, safe update feedback, and keyboard-friendly entry
-- Shared syllabus with autosave recovery, unsaved-change protection, word count, copy, and text download
+- Shared tasks with newest-first ordering, progress, responsive Open/Done/All filters, safe update feedback, and keyboard-friendly entry
+- Shared syllabus with autosave recovery, exact save times, unsaved-change protection, word count, copy, and text download
 - Private searchable class roster with direct email actions, visible only to enrolled students
 - Persistent class-area links, keyboard tab navigation, reduced-motion support, responsive layouts, and branded error pages
 
@@ -52,8 +52,9 @@ The publishable key is safe to expose to the browser; authorization must remain 
 ## Verification
 
 ```bash
+npm test
 npm run lint
 npm run build
 ```
 
-Run both commands before pushing changes to `main`.
+Run all three commands before pushing changes to `main`.
