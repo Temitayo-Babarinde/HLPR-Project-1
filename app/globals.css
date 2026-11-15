@@ -375,7 +375,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .discussion-grid { display: block; min-height: 0; }
   .thread-list { border-right: 0; border-bottom: 1px solid var(--line); max-height: 265px; overflow-y: auto; }
   .conversation-panel { min-height: 500px; }
-  .message-stream { max-height: none; }
+  .conversation-header { padding-inline: 18px; }
+  .message-stream { max-height: none; padding-inline: 18px; }
+  .message-row.reply { margin-left: 20px; }
+  .reply-box { margin-inline: 14px; }
   .new-thread { padding: 28px 20px; }
   .task-entry { align-items: stretch; flex-direction: column; }
   .task-input-wrap { min-height: 38px; }
