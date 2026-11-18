@@ -373,15 +373,20 @@ export default function ClassHub({ section }) {
     if (!newTask.trim() || !userId || addingTask) return;
     setAddingTask(true);
     setError('');
-    const { data, error: taskError } = await supabase.from('tasks').insert({
-      section_id: section.id, title: newTask.trim(), created_by: userId,
-    }).select().single();
-    if (taskError) setError('That task could not be added. Your draft is still here so you can try again.');
-    else if (data) {
-      setTasks((previous) => [data, ...previous]);
-      setNewTask('');
+    try {
+      const { data, error: taskError } = await supabase.from('tasks').insert({
+        section_id: section.id, title: newTask.trim(), created_by: userId,
+      }).select().single();
+      if (taskError) setError('That task could not be added. Your draft is still here so you can try again.');
+      else if (data) {
+        setTasks((previous) => [data, ...previous]);
+        setNewTask('');
+      }
+    } catch {
+      setError('The connection was interrupted. Your task is still here so you can try again.');
+    } finally {
+      setAddingTask(false);
     }
-    setAddingTask(false);
   }
 
   async function toggleTask(task) {
