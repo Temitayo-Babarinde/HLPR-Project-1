@@ -58,6 +58,7 @@ export default function ClassHub({ section }) {
   const [savedAt, setSavedAt] = useState(null);
   const [saveAttempt, setSaveAttempt] = useState(0);
   const [copyState, setCopyState] = useState('idle');
+  const [emailCopyState, setEmailCopyState] = useState({ id: null, status: 'idle' });
   const [userId, setUserId] = useState(null);
   const loadedSyllabus = useRef(false);
   const syllabusRevision = useRef(0);
@@ -284,6 +285,16 @@ export default function ClassHub({ section }) {
       });
   }, [roster, rosterQuery]);
   const syllabusWords = syllabus.trim() ? syllabus.trim().split(/\s+/).length : 0;
+
+  async function copyEmail(person) {
+    setEmailCopyState({ id: person.id, status: 'copying' });
+    try {
+      await navigator.clipboard.writeText(person.email);
+      setEmailCopyState({ id: person.id, status: 'copied' });
+    } catch {
+      setEmailCopyState({ id: person.id, status: 'error' });
+    }
+  }
 
   async function copySyllabus() {
     try {
@@ -711,7 +722,14 @@ export default function ClassHub({ section }) {
                     <div className="person-card" key={person.id}>
                       <div className="avatar large">{initials(person)}</div>
                       <div className="person-card-info"><strong>{displayName}</strong><span>{person.email}{person.isMe ? ' · You' : ''}</span></div>
-                      {!person.isMe && person.email ? <a href={`mailto:${person.email}`} aria-label={`Email ${displayName}`}>Email</a> : null}
+                      {person.email ? (
+                        <div className="person-card-actions">
+                          <button type="button" onClick={() => copyEmail(person)} disabled={emailCopyState.id === person.id && emailCopyState.status === 'copying'} aria-live="polite">
+                            {emailCopyState.id === person.id && emailCopyState.status === 'copying' ? 'Copying…' : emailCopyState.id === person.id && emailCopyState.status === 'copied' ? '✓ Copied' : emailCopyState.id === person.id && emailCopyState.status === 'error' ? 'Copy failed' : 'Copy'}
+                          </button>
+                          {!person.isMe ? <a href={`mailto:${person.email}`} aria-label={`Email ${displayName}`}>Email</a> : null}
+                        </div>
+                      ) : null}
                     </div>
                   );
                 })}
