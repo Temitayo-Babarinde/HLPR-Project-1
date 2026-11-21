@@ -5,23 +5,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '../../lib/supabase/client';
 import { getCurrentSemester } from '../../lib/classes/current-semester.mjs';
+import { collapseWhitespace, normalizeIdentifier, normalizeSemester } from '../../lib/classes/join-input.mjs';
 
 const DEPARTMENTS = ['AFPRL', 'ANTHC', 'BIOL', 'CHEM', 'CSCI', 'ECON', 'ENGL', 'HIST', 'MATH', 'MEDIA', 'PHIL', 'PHYS', 'POLSC', 'PSYCH', 'SOC'];
-
-function collapseWhitespace(value) {
-  return value.trim().replace(/\s+/g, ' ');
-}
-
-function normalizeIdentifier(value) {
-  return collapseWhitespace(value).toUpperCase();
-}
-
-function normalizeSemester(value) {
-  return collapseWhitespace(value).replace(
-    /^(spring|summer|fall|winter)\s+(\d{4})$/i,
-    (_, term, year) => `${term[0].toUpperCase()}${term.slice(1).toLowerCase()} ${year}`,
-  );
-}
 
 export default function JoinPage() {
   const supabase = createClient();
