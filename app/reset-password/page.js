@@ -18,6 +18,8 @@ export default function ResetPasswordPage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    if (loading) return;
+
     setError('');
 
     if (password !== confirmation) {
@@ -25,21 +27,28 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    setLoading(true);
-    const { error: updateError } = await supabase.auth.updateUser({ password });
-    if (updateError) {
-      setError(updateError.message);
-      setLoading(false);
-      return;
-    }
+    try {
+      setLoading(true);
+      const { error: updateError } = await supabase.auth.updateUser({ password });
+      if (updateError) {
+        setError(updateError.code === 'weak_password'
+          ? 'Choose a stronger password, then try again.'
+          : 'We could not update your password. The reset link may have expired, so request a new one and try again.');
+        return;
+      }
 
-    router.push('/dashboard');
-    router.refresh();
+      router.push('/dashboard');
+      router.refresh();
+    } catch {
+      setError('The connection was interrupted. Your passwords are still here, so you can try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <main className="shell auth-shell">
-      <form onSubmit={handleSubmit} className="card auth-card">
+      <form onSubmit={handleSubmit} className="card auth-card" aria-busy={loading}>
         <div className="eyebrow">Account recovery</div>
         <h1 className="brand auth-title">Choose a new password</h1>
         <p className="auth-intro">Use at least eight characters. Your new password will work for both supported CUNY email formats.</p>
