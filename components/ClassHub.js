@@ -481,7 +481,7 @@ export default function ClassHub({ section }) {
           {tab === 'discussion' ? (
             <div className="discussion-grid">
               <aside className="thread-list">
-                <div className="section-heading"><div><span>Class forum</span><h2>Discussion</h2></div><button onClick={() => openConversation(null)}>+ New</button></div>
+                <div className="section-heading"><div><span>Class forum</span><h2>Discussion</h2></div><button onClick={() => openConversation(null)} aria-controls="discussion-conversation" aria-pressed={!selectedThreadId}>+ New</button></div>
                 <div className="thread-search-row">
                   <label className="thread-search">
                     <span className="sr-only">Search discussions</span>
@@ -506,7 +506,13 @@ export default function ClassHub({ section }) {
                 {filteredThreads.map((thread) => {
                   const count = messagesByThread.get(thread.id)?.length || 0;
                   return (
-                    <button key={thread.id} className={selectedThreadId === thread.id ? 'thread-card active' : 'thread-card'} onClick={() => openConversation(thread.id)}>
+                    <button
+                      key={thread.id}
+                      className={selectedThreadId === thread.id ? 'thread-card active' : 'thread-card'}
+                      onClick={() => openConversation(thread.id)}
+                      aria-controls="discussion-conversation"
+                      aria-pressed={selectedThreadId === thread.id}
+                    >
                       <strong>{thread.title}</strong>
                       <span>
                         {people.get(thread.created_by)?.full_name || 'Classmate'} ·{' '}
@@ -522,7 +528,7 @@ export default function ClassHub({ section }) {
                 {threads.length > 0 && filteredThreads.length === 0 ? <div className="empty-mini">No discussions match “{threadQuery.trim()}”.</div> : null}
               </aside>
 
-              <div className="conversation-panel" ref={conversationRef}>
+              <div id="discussion-conversation" className="conversation-panel" ref={conversationRef}>
                 {!selectedThread ? (
                   <form className="new-thread" onSubmit={createThread}>
                     <span className="eyebrow">Start a conversation</span>
