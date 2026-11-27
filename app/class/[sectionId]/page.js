@@ -35,5 +35,5 @@ export default async function ClassPage({ params }) {
   if (membershipError) throw new Error('Class membership could not be verified.');
   if (!membership) redirect('/dashboard');
 
-  return <ClassHub section={section} />;
+  return <ClassHub section={section} userId={user.id} />;
 }

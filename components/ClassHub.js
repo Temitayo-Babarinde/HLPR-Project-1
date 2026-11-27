@@ -32,7 +32,7 @@ function fullTime(date) {
   });
 }
 
-export default function ClassHub({ section }) {
+export default function ClassHub({ section, userId }) {
   const supabase = useMemo(() => createClient(), []);
   const [tab, setTab] = useState('discussion');
   const [roster, setRoster] = useState([]);
@@ -59,7 +59,6 @@ export default function ClassHub({ section }) {
   const [saveAttempt, setSaveAttempt] = useState(0);
   const [copyState, setCopyState] = useState('idle');
   const [emailCopyState, setEmailCopyState] = useState({ id: null, status: 'idle' });
-  const [userId, setUserId] = useState(null);
   const loadedSyllabus = useRef(false);
   const syllabusRevision = useRef(0);
   const loadedThreadDraft = useRef(false);
@@ -166,11 +165,8 @@ export default function ClassHub({ section }) {
   useEffect(() => {
     let active = true;
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!active || !user) return;
-      setUserId(user.id);
       const results = await Promise.all([
-        supabase.from('profiles').select('id, full_name, email').eq('id', user.id).single(),
+        supabase.from('profiles').select('id, full_name, email').eq('id', userId).single(),
         supabase.rpc('get_classmates', { p_section_id: section.id }),
         supabase.from('syllabi').select('content').eq('section_id', section.id).maybeSingle(),
         supabase.from('tasks').select('*').eq('section_id', section.id).order('created_at', { ascending: false }),
@@ -187,7 +183,7 @@ export default function ClassHub({ section }) {
     }
     load();
     return () => { active = false; };
-  }, [loadDiscussion, section.id, supabase]);
+  }, [loadDiscussion, section.id, supabase, userId]);
 
   useEffect(() => {
     const channel = supabase
