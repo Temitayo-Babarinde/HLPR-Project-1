@@ -49,6 +49,18 @@ Live app: [hlpr-hunter.vercel.app](https://hlpr-hunter.vercel.app)
 
 The publishable key is safe to expose to the browser; authorization must remain enforced by Supabase row-level security. Do not add a service-role key to Vercel variables used by client code.
 
+## Troubleshooting login outages
+
+If every account suddenly fails to sign in, check the infrastructure before changing authentication code:
+
+1. Open the Supabase project dashboard and confirm the project status is healthy. Free projects can pause after low activity; use **Resume project** and wait for the restore to finish before testing again.
+2. Run a read-only query such as `select 1;` in the SQL editor to confirm the database is reachable.
+3. Confirm Supabase Auth still allows `https://hlpr-hunter.vercel.app/auth/confirm` and `http://localhost:3000/auth/confirm` as redirect URLs.
+4. Confirm Vercel has the correct `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in the affected environment, then redeploy only if those values changed.
+5. Check Supabase Auth logs for the exact failure before editing application code.
+
+Do not disable row-level security, broaden policies, or expose a secret/service-role key to recover from a login outage. A paused project returns with its existing data and configuration when resumed.
+
 ## Verification
 
 ```bash
